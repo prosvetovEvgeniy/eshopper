@@ -6,14 +6,17 @@
  });
 	var RGBChange = function() {
 	  $('#RGB').css('background', 'rgb('+r.getValue()+','+g.getValue()+','+b.getValue()+')')
-	};	
+	};
+
   $('.add-to-cart').on('click', function (e) {
 	  e.preventDefault();
 
-	  var id = $(this).data();
+	  var id = $(this).data() ;
+	  var qty = $('#qty').val();
+
 	  $.ajax({
 		  url: '/cart/add',
-		  data: {id: id},
+		  data: {id: id, qty: qty},
 		  type: 'GET',
 		  success: function (res) {
 		  	showCart(res);
@@ -41,6 +44,39 @@
             }
         });
 	}
+
+	$('#cart .modal-body').on('click', '.del-item',function () {
+		var id = $(this).data('id');
+
+        $.ajax({
+            url: '/cart/delete-item',
+			data: {id: id},
+            type: 'GET',
+            success: function (res) {
+                if(!res) alert('Ошибка!');
+
+                showCart(res);
+            },
+            error: function () {
+                alert('Error cannot delete item');
+            }
+        });
+    })
+	function getCart() {
+        $.ajax({
+            url: '/cart/show',
+            type: 'GET',
+            success: function (res) {
+                if(!res) alert('Ошибка!');
+                showCart(res);
+            },
+            error: function () {
+                alert('Error cannot delete item');
+            }
+        });
+		return false;
+    }
+    fu
 /*scroll to top*/
 
 $(document).ready(function(){

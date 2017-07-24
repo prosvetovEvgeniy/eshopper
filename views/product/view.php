@@ -95,11 +95,11 @@ use yii\helpers\Url;
                             <span>
 									<span><?= $product->price ?> руб</span>
 									<label>Quantity:</label>
-									<input type="text" value="3" />
-									<button type="button" class="btn btn-fefault cart">
+									<input type="text" value="1" id="qty" />
+									<a href="<?= Url::to(['cart/add', 'id' => $product->id]) ?>" data-id="<?= $product->id ?>" type="button" class="btn btn-fefault add-to-cart cart">
 										<i class="fa fa-shopping-cart"></i>
 										Add to cart
-									</button>
+									</a>
 								</span>
                             <p><b>Availability:</b> In Stock</p>
                             <p><b>Condition:</b> New</p>

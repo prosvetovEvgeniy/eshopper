@@ -1182,7 +1182,7 @@ h2.title {
 }
 
 .del-item{
-  cursor: pointer;
+  cursor: pointer !important;
 }
 
 .view-product {
