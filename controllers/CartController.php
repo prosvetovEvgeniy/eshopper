@@ -92,6 +92,11 @@ class CartController extends AppController
                $this->saveOrderItems($session['cart'], $order->id);
                Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
 
+               Yii::$app->mailer->compose('order',['session' => $session])
+                   ->setFrom(['test@yandex.ru' => 'eshopper'])
+                        ->setTo($order->email)
+                            ->setSubject('Заказ')->send();
+
                $session->remove('cart');
                $session->remove('cart.qty');
                $session->remove('cart.sum');
@@ -101,7 +106,6 @@ class CartController extends AppController
            else{
                Yii::$app->session->setFlash('error', 'Ошибка оформления заказа');
            }
-
         }
 
         $this->setMetaTags('Корзина');
