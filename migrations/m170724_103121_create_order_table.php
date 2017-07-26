@@ -18,7 +18,7 @@ class m170724_103121_create_order_table extends Migration
             'updated_at' => $this->dateTime()->notNull(),
             'qty' => $this->integer(10)->notNull(),
             'sum' => $this->float()->notNull(),
-            'status' => "ENUM('0', '1') NOT NULL DEFAULT '1'",
+            'status' => "ENUM('0', '1') NOT NULL DEFAULT '0'",
             'name' => $this->string()->notNull(),
             'email' => $this->string()->notNull(),
             'phone' => $this->string()->notNull(),
