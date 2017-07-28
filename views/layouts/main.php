@@ -102,7 +102,7 @@ AppAsset::register($this);
 							<ul class="nav navbar-nav">
 
                                 <?php if(!Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?= Url::to(['/admin/order']);?>"><i class="fa fa-lock"></i> Account</a></li>
+                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Account</a></li>
                                 <?php endif; ?>
 
 								<!-- <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>

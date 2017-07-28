@@ -5,13 +5,13 @@ namespace app\components;
 use yii\base\Widget;
 use app\models\Category;
 use Yii;
-
+//виджет отчечает за построение меню
 class MenuWidget extends Widget
 {
-    public $tpl;
+    public $tpl; //режим отображанеия меню горизонтальное или вертикальное (0,1)
     public $data; //хранятся все записи категорий из БД
-    public $tree;
-    public $menuHtml;
+    public $tree;  //дерево значений для категорий товаров и их подкатегорий
+    public $menuHtml; //созданное меню
 
     public function init()
     {
@@ -32,12 +32,14 @@ class MenuWidget extends Widget
             return $menu;
         }
         else {
-            $this->data = Category::find()->indexBy('id')->asArray()->all();
-            $this->tree = $this->getTree();
+            $this->data = Category::find()->indexBy('id')->asArray()->all(); //получаем список категорий товаров
+            $this->tree = $this->getTree(); //строим дерево
 
+            //рекурсивно строим меню с неограниченным количеством подкатегорий
             $this->menuHtml = '<ul class="catalog category-products">';
             $this->menuHtml .= $this->getMenuHtml($this->tree);
             $this->menuHtml .= '</ul>';
+
 
             Yii::$app->cache->set('menu', $this->menuHtml, 60);
             return $this->menuHtml;

@@ -13,6 +13,7 @@ use yii\web\Controller;
 
 class AppController extends Controller
 {
+    //устанавливает мета теги на странице title, keywords, description
     protected function setMetaTags($title = null, $keywords = null, $description = null){
         $this->view->title = $title;
         $this->view->registerMetaTag(['name' => 'keywords', 'content' => "$keywords"]);

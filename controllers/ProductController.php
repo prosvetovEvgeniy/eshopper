@@ -15,6 +15,7 @@ use yii\web\HttpException;
 
 class ProductController extends AppController
 {
+    //отображает информацию об определенном товаре
     public function actionView($id){
 
         $product = Product::findOne($id);
@@ -22,7 +23,7 @@ class ProductController extends AppController
         if(empty($product)){
             throw new HttpException(404, 'Такого товара нет');
         }
-
+        //данные для окна "Recommended items" в виде view
         $hits = Product::find()->where(['hit' => '1'])->limit(6)->asArray()->all();
 
         $this->setMetaTags('Eshopper ' . $product['name'],  $product['keywords'], $product['description']);

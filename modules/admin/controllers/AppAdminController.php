@@ -13,20 +13,5 @@ use yii\filters\AccessControl;
 
 class AppAdminController extends Controller
 {
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' => [
-                    // allow authenticated users
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                    // everything else is denied
-                ],
-            ],
-        ];
-    }
+
 }

@@ -8,12 +8,15 @@
 	  $('#RGB').css('background', 'rgb('+r.getValue()+','+g.getValue()+','+b.getValue()+')')
 	};
 
+	//срабатывает при клике на кнопку "add to cart"
   $('.add-to-cart').on('click', function (e) {
 	  e.preventDefault();
 
+	  //получаем id товара и количество
 	  var id = $(this).data() ;
 	  var qty = $('#qty').val();
 
+	  //отправляем данные на сервер
 	  $.ajax({
 		  url: '/cart/add',
 		  data: {id: id, qty: qty},
@@ -26,7 +29,7 @@
           }
 	  });
   });
-
+  //отображает корзину
   function showCart(cart) {
 	  $('#cart .modal-body').html(cart);
 	  $('#cart').modal();
@@ -44,7 +47,7 @@
             }
         });
 	}
-
+	//срабатывает при нажатии на кнопку удалить товар(крестик) в модальном окне корзины
 	$('#cart .modal-body').on('click', '.del-item',function () {
 		var id = $(this).data('id');
 
