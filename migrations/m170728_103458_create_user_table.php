@@ -5,9 +5,11 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `user`.
  */
-class m170726_130945_create_user_table extends Migration
+class m170728_103458_create_user_table extends Migration
 {
-
+    /**
+     * @inheritdoc
+     */
     public function up()
     {
         $this->createTable('user', [
@@ -17,7 +19,10 @@ class m170726_130945_create_user_table extends Migration
             'auth_key' => $this->string()->defaultValue('NULL')
         ]);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function down()
     {
         $this->dropTable('user');
