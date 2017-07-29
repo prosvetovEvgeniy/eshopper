@@ -136,7 +136,7 @@ AppAsset::register($this);
                         </div>
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
-                                <li><a href="<?= Url::to(['category/index']) ?>" class="active">Главная</a></li>
+                                <li><a href="<?= Url::to(['/admin']) ?>" class="active">Заказы</a></li>
                                 <li class="dropdown"><a href="#">Категории<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= Url::to(['category/index']) ?>">Список категорий</a></li>
