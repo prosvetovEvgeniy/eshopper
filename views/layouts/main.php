@@ -102,17 +102,17 @@ AppAsset::register($this);
 							<ul class="nav navbar-nav">
 
                                 <?php if(!Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Account</a></li>
+                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
                                 <?php endif; ?>
 
 								<!-- <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
 								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
-								<li><a href="<?= Url::to(['cart/view']) ?>"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+								<li><a href="<?= Url::to(['cart/view']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
 
                                 <?php if(Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Login</a></li>
+                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Войти</a></li>
                                 <?php else: ?>
-                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Logout (<?= Yii::$app->user->identity['username'] ?>)</a></li>
+                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['username'] ?>)</a></li>
                                 <?php endif; ?>
 
                             </ul>
@@ -136,24 +136,7 @@ AppAsset::register($this);
 						</div>
 						<div class="mainmenu pull-left">
 							<ul class="nav navbar-nav collapse navbar-collapse">
-								<li><a href="index.html" class="active">Home</a></li>
-								<li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="shop.html">Products</a></li>
-										<li><a href="product-details.html">Product Details</a></li> 
-										<li><a href="checkout.html">Checkout</a></li> 
-										<li><a href="cart.html">Cart</a></li> 
-										<li><a href="login.html">Login</a></li> 
-                                    </ul>
-                                </li> 
-								<li class="dropdown"><a href="#">Blog<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="blog.html">Blog List</a></li>
-										<li><a href="blog-single.html">Blog Single</a></li>
-                                    </ul>
-                                </li> 
-								<li><a href="404.html">404</a></li>
-								<li><a href="contact-us.html">Contact</a></li>
+
 							</ul>
 						</div>
 					</div>

@@ -2,20 +2,19 @@
 
 namespace app\modules\admin\controllers;
 
-use app\controllers\AppController;
-use app\modules\admin\models\OrderItems;
+use app\modules\admin\models\Category;
 use Yii;
-use app\modules\admin\models\Order;
-use yii\data\ActiveDataProvider;
+use app\modules\admin\models\Product;
+use app\modules\admin\controllers\ProductSearch;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * OrderController implements the CRUD actions for Order model.
- */
-class OrderController extends Controller
+
+class ProductController extends Controller
 {
+
     public function behaviors()
     {
         return [
@@ -30,20 +29,16 @@ class OrderController extends Controller
 
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Order::find()->limit('created_at'),
-            'pagination' =>[
-                'pageSize' => 10
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'status' => SORT_ASC
-                ]
-            ],
-        ]);
+        $searchModel = new ProductSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        $categoryArray = ArrayHelper::map(Category::find()->all(), 'id', 'name');
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'categoryArray' => $categoryArray,
         ]);
     }
 
@@ -56,13 +51,16 @@ class OrderController extends Controller
 
     public function actionCreate()
     {
-        $model = new Order();
+        $model = new Product();
+
+        $categoryArray = ArrayHelper::map(Category::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'categoryArray' => $categoryArray,
             ]);
         }
     }
@@ -71,26 +69,29 @@ class OrderController extends Controller
     {
         $model = $this->findModel($id);
 
+        $categoryArray = ArrayHelper::map(Category::find()->all(), 'id', 'name');
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'categoryArray' => $categoryArray,
             ]);
         }
     }
 
     public function actionDelete($id)
     {
-        OrderItems::deleteAll("order_id = {$id}");
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
+
     protected function findModel($id)
     {
-        if (($model = Order::findOne($id)) !== null) {
+        if (($model = Product::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

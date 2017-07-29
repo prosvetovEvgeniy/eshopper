@@ -3,6 +3,7 @@
 namespace app\modules\admin\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "order".
@@ -20,7 +21,7 @@ use Yii;
  *
  * @property OrderItems[] $orderItems
  */
-class Order extends \yii\db\ActiveRecord
+class Order extends ActiveRecord
 {
 
     public static function tableName()

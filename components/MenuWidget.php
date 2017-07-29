@@ -12,6 +12,7 @@ class MenuWidget extends Widget
     public $data; //хранятся все записи категорий из БД
     public $tree;  //дерево значений для категорий товаров и их подкатегорий
     public $menuHtml; //созданное меню
+    public $model;
 
     public function init()
     {
@@ -26,24 +27,29 @@ class MenuWidget extends Widget
 
     public function run()
     {
-        $menu = Yii::$app->cache->get('menu');
+        if($this->tpl == 'menu.php'){
 
-        if($menu){
-            return $menu;
+            $menu = Yii::$app->cache->get('menu');
+
+            if($menu){
+                return $menu;
+            }
         }
-        else {
-            $this->data = Category::find()->indexBy('id')->asArray()->all(); //получаем список категорий товаров
-            $this->tree = $this->getTree(); //строим дерево
 
-            //рекурсивно строим меню с неограниченным количеством подкатегорий
-            $this->menuHtml = '<ul class="catalog category-products">';
-            $this->menuHtml .= $this->getMenuHtml($this->tree);
-            $this->menuHtml .= '</ul>';
+        $this->data = Category::find()->indexBy('id')->asArray()->all(); //получаем список категорий товаров
+        $this->tree = $this->getTree(); //строим дерево
 
+        //рекурсивно строим меню с неограниченным количеством подкатегорий
+        $this->menuHtml = '<ul class="catalog category-products">';
+        $this->menuHtml .= $this->getMenuHtml($this->tree);
+        $this->menuHtml .= '</ul>';
 
+        if($this->tpl == 'menu.php'){
             Yii::$app->cache->set('menu', $this->menuHtml, 60);
-            return $this->menuHtml;
         }
+
+        return $this->menuHtml;
+
     }
 
     protected function getTree(){
@@ -60,15 +66,15 @@ class MenuWidget extends Widget
         return $tree;
     }
 
-    protected function getMenuHtml($tree){
+    protected function getMenuHtml($tree, $tab = ''){
         $str = '';
         foreach($tree as $category){
-            $str .= $this->catToTemplate($category);
+            $str .= $this->catToTemplate($category, $tab);
         }
         return $str;
     }
 
-    protected function catToTemplate($category){
+    protected function catToTemplate($category, $tab){
         ob_start();
         include __DIR__ . '/menu_tpl/' . $this->tpl;
         return ob_get_clean();
