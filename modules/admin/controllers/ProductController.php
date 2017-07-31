@@ -3,6 +3,7 @@
 namespace app\modules\admin\controllers;
 
 use app\modules\admin\models\Category;
+use app\modules\admin\models\Image;
 use Yii;
 use app\modules\admin\models\Product;
 use app\modules\admin\controllers\ProductSearch;
@@ -10,6 +11,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 
 class ProductController extends Controller
@@ -44,8 +46,12 @@ class ProductController extends Controller
 
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        $img = $model->getImage(); // получаем картинки из модели для отображения в виде
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'imgUrl' => $img->getUrl(),
         ]);
     }
 
@@ -56,6 +62,21 @@ class ProductController extends Controller
         $categoryArray = ArrayHelper::map(Category::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            //получаем экземпляр класса UploadFile для главной картинки
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if($model->image){
+                $model->upload();
+            }
+            unset($model->image);
+
+            //получаем экземпляр класса UploadFile для галереи картинок
+            $model->gallery = UploadedFile::getInstances($model, 'gallery');
+            if($model->gallery){
+                $model->uploadGallery(); //загружаем галерею в БД
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -72,7 +93,23 @@ class ProductController extends Controller
         $categoryArray = ArrayHelper::map(Category::find()->all(), 'id', 'name');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            //получаем экземпляр класса UploadFile для главной картинки
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if($model->image){
+                $model->upload();
+            }
+            unset($model->image);
+
+            //получаем экземпляр класса UploadFile для галереи картинок
+            $model->gallery = UploadedFile::getInstances($model, 'gallery');
+            if($model->gallery){
+                $model->uploadGallery();
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
+
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -83,6 +120,9 @@ class ProductController extends Controller
 
     public function actionDelete($id)
     {
+        //удаляем фотографии товара
+        Image::deleteAll("itemId = {$id}");
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
