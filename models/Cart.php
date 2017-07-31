@@ -12,6 +12,14 @@ use yii\db\ActiveRecord;
 
 class Cart extends ActiveRecord
 {
+    public function behaviors()
+    {
+        return [
+            'image' => [
+                'class' => 'rico\yii2images\behaviors\ImageBehave',
+            ]
+        ];
+    }
     //добавляет данные в массив сессии
     public function addToCart($product, $qty = 1){
         //если массив ['cart'] с данным id товара существует, то увеличиваем количество данного товара в корзине
@@ -20,13 +28,13 @@ class Cart extends ActiveRecord
             $_SESSION['cart'][$product->id]['qty'] += $qty;
         }
         else{
-
+            $mainImg = $product->getImage();
             //если не существует то создаем такой массив
             $_SESSION['cart'][$product->id] = [
                 'qty' => $qty,
                 'name' => $product->name,
                 'price' => $product->price,
-                'img' => $product->img
+                'img' => $mainImg->getUrl('x50')
             ];
         }
         //поле qty итоговое количество товара в корзине, поле sum итоговая сумма всего заказа

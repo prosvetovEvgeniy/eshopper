@@ -47,29 +47,30 @@ use yii\helpers\Url;
                     <div class="col-sm-5">
 
                         <div class="view-product">
-                            <?=Html::img("@web/images/product/{$product->img}",  ['alt' => $product-name]) ?>
+                            <?=Html::img("{$mainImg}",  ['alt' => $product-name]) ?>
                             <h3>ZOOM</h3>
                         </div>
                         <div id="similar-product" class="carousel slide" data-ride="carousel">
 
+
                             <!-- Wrapper for slides -->
                             <div class="carousel-inner">
-                                <div class="item active">
-                                    <a href=""><img src="/images/product-details/similar1.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar2.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar3.jpg" alt=""></a>
-                                </div>
-                                <div class="item">
-                                    <a href=""><img src="/images/product-details/similar1.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar2.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar3.jpg" alt=""></a>
-                                </div>
-                                <div class="item">
-                                    <a href=""><img src="/images/product-details/similar1.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar2.jpg" alt=""></a>
-                                    <a href=""><img src="/images/product-details/similar3.jpg" alt=""></a>
+
+                                <?php
+                                $count = count($gallery); $i = 0;
+                                ?>
+                                <?php foreach($gallery as $img): ?>
+                                <?php if($i%3 == 0): ?>
+
+                                <div class="item <?php if($i == 0) echo 'active' ?>">
+
+                                <?php endif; ?>
+                                    <a href=""><?= Html::img($img->getUrl('84x85')) ?></a>
+                                <?php $i++; if($i%3 == 0 || $i == $count): ?>
                                 </div>
 
+                                <?php endif; ?>
+                                <?php endforeach; ?>
                             </div>
 
                             <!-- Controls -->

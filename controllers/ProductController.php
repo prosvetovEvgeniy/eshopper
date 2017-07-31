@@ -27,6 +27,15 @@ class ProductController extends AppController
         $hits = Product::find()->where(['hit' => '1'])->limit(6)->asArray()->all();
 
         $this->setMetaTags('Eshopper ' . $product['name'],  $product['keywords'], $product['description']);
-        return $this->render('view', compact('product', 'hits'));
+
+        $mainImg = $product->getImage(); //главная картинка для товара
+        $gallery = $product->getImages(); //галерея картинок
+
+        return $this->render('view', ['product' => $product,
+                                            'hits' => $hits,
+                                            'mainImg' => $mainImg->getUrl(),
+                                            'gallery' => $gallery,
+                                            ]);
+
     }
 }

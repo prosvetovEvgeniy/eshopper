@@ -21,15 +21,15 @@ class CategoryController extends AppController
     //отображает индексную страницу с товарами хитами
     public function actionIndex(){
 
-        $hits = Product::find()->where(['hit' => '1'])->limit(6)->asArray()->all();
+        $hits = Product::find()->where(['hit' => '1'])->limit(6)->all();
 
         $this->setMetaTags('Eshopper');
-        return $this->render('index', compact('hits'));
+        return $this->render('index', ['hits' => $hits]);
     }
     //отображает определенную категорию товаров
     public function actionView($id){
 
-        $category = Category::find()->where(['id' => $id])->asArray()->one();
+        $category = Category::find()->where(['id' => $id])->one();
 
         //если пользователь обратился к несуществующей категории
         if(empty($category)){
