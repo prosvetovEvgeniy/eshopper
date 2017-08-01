@@ -21,9 +21,9 @@ class m170728_102707_create_product_table extends Migration
             'keywords' => $this->string()->defaultValue('NULL'),
             'description' => $this->string()->defaultValue('NULL'),
             'img' => $this->string()->notNull(),
-            'new' => "ENUM('0', '1') NOT NULL DEFAULT '0'",
-            'hit' => "ENUM('0', '1') NOT NULL DEFAULT '0'",
-            'sale' => "ENUM('0', '1') NOT NULL DEFAULT '0'",
+            'new' => $this->boolean()->defaultValue(0)->notNull(),
+            'hit' => $this->boolean()->defaultValue(0)->notNull(),
+            'sale' => $this->boolean()->defaultValue(0)->notNull(),
         ]);
 
         $this->addForeignKey('product_category_id', 'product', 'category_id', 'category', 'id');
