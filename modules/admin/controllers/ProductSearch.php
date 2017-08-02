@@ -69,7 +69,6 @@ class ProductSearch extends Product
             ->andFilterWhere(['like', 'content', $this->content])
             ->andFilterWhere(['like', 'keywords', $this->keywords])
             ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'img', $this->img])
             ->andFilterWhere(['like', 'new', $this->new])
             ->andFilterWhere(['like', 'hit', $this->hit])
             ->andFilterWhere(['like', 'sale', $this->sale]);

@@ -30,7 +30,7 @@ class Product extends \yii\db\ActiveRecord
             [['category_id'], 'integer'],
             [['content', 'new', 'hit', 'sale'], 'string'],
             [['price'], 'number'],
-            [['name', 'keywords', 'description', 'img'], 'string', 'max' => 255],
+            [['name', 'keywords', 'description'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['image'], 'file', 'extensions' => 'png, jpg'],
             [['gallery'], 'file', 'extensions' => 'png, jpg', 'maxFiles' => 4],

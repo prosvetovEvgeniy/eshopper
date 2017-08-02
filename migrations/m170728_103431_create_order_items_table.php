@@ -19,7 +19,6 @@ class m170728_103431_create_order_items_table extends Migration
             'name' => $this->string()->notNull(),
             'price' => $this->float()->notNull(),
             'qty_item' => $this->integer()->notNull(),
-            'sum_item' => $this->integer()->notNull(),
         ]);
 
         $this->addForeignKey('order_items_order_id', 'order_items', 'order_id', 'order', 'id');

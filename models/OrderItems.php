@@ -16,13 +16,17 @@ class OrderItems extends ActiveRecord
     public function rules()
     {
         return [
-            [['order_id', 'product_id', 'name', 'price', 'qty_item', 'sum_item'], 'required'],
+            [['order_id', 'product_id', 'name', 'price', 'qty_item'], 'required'],
             [['order_id', 'product_id', 'qty_item'], 'integer'],
-            [['price', 'sum_item'], 'number'],
+            [['price'], 'number'],
             [['name'], 'string', 'max' => 255],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
         ];
+    }
+
+    public function getSumItem() {
+        return $this->price*$this->qty_item;
     }
 
     public function getProduct()

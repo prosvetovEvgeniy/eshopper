@@ -135,8 +135,6 @@ class CartController extends AppController
             $order_items->name = $item['name']; //название (на момент заказа)
             $order_items->price = $item['price']; //цену (на момент заказа)
             $order_items->qty_item = $item['qty']; //количество
-            $order_items->sum_item = $item['qty'] * $item['price']; //итоговую сумму
-
             $order_items->save();
         }
 
