@@ -24,7 +24,7 @@ class ProductController extends AppController
             throw new HttpException(404, 'Такого товара нет');
         }
         //данные для окна "Recommended items" в виде view
-        $hits = Product::find()->where(['hit' => '1'])->limit(6)->asArray()->all();
+        $hits = Product::find()->where(['hit' => '1', 'deleted' => 0])->limit(6)->all();
 
         $this->setMetaTags('Eshopper ' . $product['name'],  $product['keywords'], $product['description']);
 

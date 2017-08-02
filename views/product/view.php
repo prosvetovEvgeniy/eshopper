@@ -321,9 +321,14 @@ use yii\helpers\Url;
                                     <div class="product-image-wrapper">
                                         <div class="single-products">
                                             <div class="productinfo text-center">
-                                                <?= Html::img("@web/images/product/{$hit['img']}", ['alt' => $hit['name']]); ?>
-                                                <h2><?= $hit['price'] ?> р</h2>
-                                                <p><a href="<?php Url::to(['product/view', 'id' => $hit['id']]) ?>"><?= $hit['name'] ?></a> </p>
+
+                                                <?php
+                                                    $imgUrl = $hit->getImage()->getUrl();
+                                                ?>
+
+                                                <?= Html::img("{$imgUrl}", ['alt' => $hit->name]); ?>
+                                                <h2><?= $hit->price ?> р</h2>
+                                                <p><a href="<?= Url::to(['product/view', 'id' => $hit->id]) ?>"><?= $hit->name ?></a> </p>
                                                 <button type="button" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</button>
                                             </div>
                                         </div>

@@ -30,6 +30,7 @@ class Product extends \yii\db\ActiveRecord
             [['category_id'], 'integer'],
             [['content', 'new', 'hit', 'sale'], 'string'],
             [['price'], 'number'],
+            [['deleted'], 'boolean'],
             [['name', 'keywords', 'description'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['image'], 'file', 'extensions' => 'png, jpg'],
@@ -55,6 +56,7 @@ class Product extends \yii\db\ActiveRecord
             'new' => 'Новинка',
             'hit' => 'Хит',
             'sale' => 'Распродажа',
+            'deleted' => 'Удален',
         ];
     }
 

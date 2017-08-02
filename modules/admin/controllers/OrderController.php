@@ -42,6 +42,10 @@ class OrderController extends Controller
             ],
         ]);
 
+        /*$order = Order::findOne(17);
+        debug($order->getQuantity());
+        debug($order->getQuantity());
+        die;*/
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);

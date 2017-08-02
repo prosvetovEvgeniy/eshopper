@@ -21,7 +21,7 @@ class CategoryController extends AppController
     //отображает индексную страницу с товарами хитами
     public function actionIndex(){
 
-        $hits = Product::find()->where(['hit' => '1'])->limit(6)->all();
+        $hits = Product::find()->where(['hit' => '1', 'deleted' => 0])->limit(6)->all();
 
         $this->setMetaTags('Eshopper');
         return $this->render('index', ['hits' => $hits]);
@@ -36,7 +36,7 @@ class CategoryController extends AppController
             throw new HttpException(404, 'Такой категории не существует');
         }
         //пагинация
-        $query = Product::find()->where(['category_id' => $id]);
+        $query = Product::find()->where(['category_id' => $id, 'deleted' => 0]);
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3, 'forcePageParam' => false, 'pageSizeParam' => false]);
         $products = $query->offset($pages->offset)->limit($pages->limit)->all();
 
@@ -51,7 +51,7 @@ class CategoryController extends AppController
         if(!$q)
             return $this->render('search');
 
-        $query = Product::find()->where(['like', 'name', $q]);
+        $query = Product::find()->where(['like', 'name', $q])->andFilterWhere(['deleted' => 0]);
 
         //пагинация
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 9, 'forcePageParam' => false, 'pageSizeParam' => false]);

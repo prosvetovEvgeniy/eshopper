@@ -41,6 +41,12 @@ mihaildev\elfinder\Assets::noConflict($this);
 
     <?= $form->field($model, 'sale')->checkbox([ '0' => 'нет', '1' => 'да', ]) ?>
 
+    <?php
+        if(isset($isUpdate)){
+            echo $form->field($model, 'deleted')->checkbox([ '0' => 'нет', '1' => 'да', ]);
+        }
+    ?>
+
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

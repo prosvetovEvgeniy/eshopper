@@ -57,6 +57,24 @@ class Order extends ActiveRecord
         ];
     }
 
+    public function getQuantity(){
+        $qty = 0;
+
+        foreach($this->orderItems as $item){
+            $qty += $item->qty_item;
+        }
+
+        return $qty;
+    }
+    public function getTotalSum(){
+        $sum = 0;
+
+        foreach($this->orderItems as $item){
+            $sum += $item->price;
+        }
+
+        return $sum;
+    }
     public function getOrderItems()
     {
         return $this->hasMany(OrderItems::className(), ['order_id' => 'id']);

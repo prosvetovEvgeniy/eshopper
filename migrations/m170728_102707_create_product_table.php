@@ -23,6 +23,7 @@ class m170728_102707_create_product_table extends Migration
             'new' => $this->boolean()->defaultValue(0)->notNull(),
             'hit' => $this->boolean()->defaultValue(0)->notNull(),
             'sale' => $this->boolean()->defaultValue(0)->notNull(),
+            'deleted' => $this->boolean()->defaultValue(0)->notNull(),
         ]);
 
         $this->addForeignKey('product_category_id', 'product', 'category_id', 'category', 'id');

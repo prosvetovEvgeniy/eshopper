@@ -16,13 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?php /*echo Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
-        ]) ?>
+        ])*/ ?>
     </p>
 
     <?= DetailView::widget([
@@ -40,9 +40,38 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => "<img src='{$imgUrl}'>",
                 'format' => 'html',
             ],
-            'new',
-            'hit',
-            'sale',
+            [
+                'attribute' => 'hit',
+                'value' => function($data){
+                    return !$data->hit ? '<span class="text-danger">Нет</span>' : '<span class="text-success">Да</span>';
+                },
+                'filter' => ['0' => 'Нет', '1' => 'Да'],
+                'format' => 'html',
+            ],
+            [
+                'attribute' => 'new',
+                'value' => function($data){
+                    return !$data->new ? '<span class="text-danger">Нет</span>' : '<span class="text-success">Да</span>';
+                },
+                'filter' => ['0' => 'Нет', '1' => 'Да'],
+                'format' => 'html',
+            ],
+            [
+                'attribute' => 'sale',
+                'value' => function($data){
+                    return !$data->sale ? '<span class="text-danger">Нет</span>' : '<span class="text-success">Да</span>';
+                },
+                'filter' => ['0' => 'Нет', '1' => 'Да'],
+                'format' => 'html',
+            ],
+            [
+                'attribute' => 'deleted',
+                'value' => function($data){
+                    return !$data->deleted ? '<span class="text-danger">Нет</span>' : '<span class="text-success">Да</span>';
+                },
+                'filter' => ['0' => 'Нет', '1' => 'Да'],
+                'format' => 'html',
+            ],
         ],
     ]) ?>
 

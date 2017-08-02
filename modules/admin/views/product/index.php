@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
             [
                 'attribute' => 'category_id',
                 'value' => function($data){
@@ -33,11 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => $categoryArray,
             ],
             'name',
-            //'content:ntext',
             'price',
              'keywords',
              'description',
-             //'img',
              [
                 'attribute' => 'hit',
                 'value' => function($data){
@@ -62,8 +59,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ['0' => 'Нет', '1' => 'Да'],
                 'format' => 'html',
              ],
+             [
+                'attribute' => 'deleted',
+                'value' => function($data){
+                    return !$data->deleted ? '<span class="text-danger">Нет</span>' : '<span class="text-success">Да</span>';
+                },
+                'filter' => ['0' => 'Нет', '1' => 'Да'],
+                'format' => 'html',
+             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {view}',
+                //'template' => '{update} {view} {delete}',
+            ],
         ],
     ]); ?>
 </div>
