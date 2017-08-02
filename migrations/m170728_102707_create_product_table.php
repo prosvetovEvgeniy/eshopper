@@ -20,7 +20,6 @@ class m170728_102707_create_product_table extends Migration
             'price' => $this->float()->notNull(),
             'keywords' => $this->string()->defaultValue('NULL'),
             'description' => $this->string()->defaultValue('NULL'),
-            'img' => $this->string()->notNull(),
             'new' => $this->boolean()->defaultValue(0)->notNull(),
             'hit' => $this->boolean()->defaultValue(0)->notNull(),
             'sale' => $this->boolean()->defaultValue(0)->notNull(),
