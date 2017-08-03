@@ -17,10 +17,10 @@ class Product extends ActiveRecord
     {
         return [
             'image' => [
-                'class' => 'rico\yii2images\behaviors\ImageBehave',
-            ]
-        ];
-    }
+'class' => 'rico\yii2images\behaviors\ImageBehave',
+]
+];
+}
 
     public static function tableName()
     {
@@ -32,7 +32,8 @@ class Product extends ActiveRecord
         return [
             [['category_id', 'name', 'content', 'price'], 'required'],
             [['category_id'], 'integer'],
-            [['content', 'new', 'hit', 'sale'], 'string'],
+            [['content'], 'string'],
+            [['new', 'hit', 'sale'], 'boolean'],
             [['price'], 'number'],
             [['name', 'keywords', 'description'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
