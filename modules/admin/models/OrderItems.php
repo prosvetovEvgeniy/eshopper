@@ -43,6 +43,10 @@ class OrderItems extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getSumItem() {
+        return $this->price*$this->qty_item;
+    }
+
     /**
      * @inheritdoc
      */

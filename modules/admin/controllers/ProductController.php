@@ -118,7 +118,7 @@ class ProductController extends Controller
         }
     }
 
-    public function actionDelete($id)
+    /*public function actionDelete($id)
     {
         //удаляем фотографии товара
         Image::deleteAll("itemId = {$id}");
@@ -126,7 +126,7 @@ class ProductController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
+    }*/
 
 
     protected function findModel($id)
