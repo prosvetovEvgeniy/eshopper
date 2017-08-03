@@ -28,7 +28,8 @@ class Product extends \yii\db\ActiveRecord
         return [
             [['category_id', 'name', 'content', 'price'], 'required'],
             [['category_id'], 'integer'],
-            [['content', 'new', 'hit', 'sale'], 'string'],
+            [['content'], 'string'],
+            [['new', 'hit', 'sale'], 'boolean'],
             [['price'], 'number'],
             [['deleted'], 'boolean'],
             [['name', 'keywords', 'description'], 'string', 'max' => 255],

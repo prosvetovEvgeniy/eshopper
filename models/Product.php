@@ -35,6 +35,7 @@ class Product extends ActiveRecord
             [['content'], 'string'],
             [['new', 'hit', 'sale'], 'boolean'],
             [['price'], 'number'],
+            [['deleted'], 'boolean'],
             [['name', 'keywords', 'description'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
             [['image'], 'file', 'extensions' => 'png, jpg'],
