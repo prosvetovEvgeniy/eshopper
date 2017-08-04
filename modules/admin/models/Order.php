@@ -23,7 +23,6 @@ use yii\db\ActiveRecord;
  */
 class Order extends ActiveRecord
 {
-
     public static function tableName()
     {
         return 'order';
@@ -32,10 +31,10 @@ class Order extends ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at', 'qty', 'sum', 'name', 'email', 'phone', 'address'], 'required'],
+            [['created_at', 'updated_at', 'name', 'email', 'phone', 'address'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['qty'], 'integer'],
-            [['sum'], 'number'],
+            [['amount'], 'integer'],
+            [['totalSum'], 'number'],
             [['status'], 'string'],
             [['name', 'email', 'phone', 'address'], 'string', 'max' => 255],
         ];
@@ -47,8 +46,8 @@ class Order extends ActiveRecord
             'id' => '№ заказа',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата изменения',
-            'qty' => 'Количество',
-            'sum' => 'Сумма',
+            'amount' => 'Количество',
+            'totalSum' => 'Сумма',
             'status' => 'Статус',
             'name' => 'Имя',
             'email' => 'Email',
@@ -57,24 +56,32 @@ class Order extends ActiveRecord
         ];
     }
 
-    public function getQuantity(){
-        $qty = 0;
+    public function getAmount(){
+
+        $amount = 0;
 
         foreach($this->orderItems as $item){
-            $qty += $item->qty_item;
+            $amount += $item->qty_item;
         }
 
-        return $qty;
+        return $amount;
+
+        //return $this->hasMany(OrderItems::className(),['order_id' => 'id'])->sum('qty_item');
     }
+
     public function getTotalSum(){
-        $sum = 0;
+
+        $totalSum = 0;
 
         foreach($this->orderItems as $item){
-            $sum += $item->price;
+            $totalSum += $item->price * $item->qty_item;
         }
 
-        return $sum;
+        return $totalSum;
+
+        //return $this->hasMany(OrderItems::className(),['order_id' => 'id'])->sum('price * qty_item');
     }
+
     public function getOrderItems()
     {
         return $this->hasMany(OrderItems::className(), ['order_id' => 'id']);

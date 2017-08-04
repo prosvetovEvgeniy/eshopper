@@ -16,13 +16,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?php /*Hecho Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
                 'confirm' => 'Are you sure you want to delete this item?',
                 'method' => 'post',
             ],
-        ]) ?>
+        ])*/ ?>
     </p>
 
     <?= DetailView::widget([
@@ -31,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'created_at',
             'updated_at',
-            'qty',
-            'sum',
+            'amount',
+            'totalSum',
             [
                 'attribute' => 'status',
                 'value' => !$model->status ? '<span class="text-danger">Активен</span>' : '<span class="text-success">Завершен</span>',
@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
-    <?php $items = $model->orderItems; ?>
+
 
     <div class="table-responsive">
         <table class="table table-hover table-striped">
@@ -58,12 +58,12 @@ $this->params['breadcrumbs'][] = $this->title;
             </tr>
             </thead>
             <tbody>
-            <?php foreach($items as $item) : ?>
+            <?php foreach($model->orderItems as $item) : ?>
                 <tr>
                     <td><a href="<?= \yii\helpers\Url::to(['/product/view', 'id' => $item->product_id]) ?>"> <?= $item['name']; ?></a></td>
-                    <td><?= $item['qty_item'] ?></td>
-                    <td><?= $item['price'] ?></td>
-                    <td><?= $item['sum_item'] ?></td>
+                    <td><?php echo $item['qty_item'] ?></td>
+                    <td><?php echo $item['price'] ?></td>
+                    <td><?php echo $item['price'] ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

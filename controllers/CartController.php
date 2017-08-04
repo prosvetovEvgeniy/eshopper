@@ -93,8 +93,6 @@ class CartController extends AppController
 
         //заполняем модель необходимыми данными
         if($order->load((Yii::$app->request->post()))){
-           $order->qty = $session['cart.qty']; //сохраняем количество и сумму заказа
-           $order->sum = $session['cart.sum'];
 
            if($order->save()){
 

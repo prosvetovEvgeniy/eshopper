@@ -30,25 +30,30 @@ class OrderController extends Controller
 
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
+        /*$dataProvider = new ActiveDataProvider([
             'query' => Order::find()->limit('created_at'),
             'pagination' =>[
                 'pageSize' => 10
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'status' => SORT_ASC
-                ]
+                    'status' => SORT_ASC,
+                ],
             ],
         ]);
 
-        /*$order = Order::findOne(17);
-        debug($order->getQuantity());
-        debug($order->getQuantity());
-        die;*/
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+        ]);*/
+        $searchModel = new OrderSearch();
+
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
+
     }
 
     public function actionView($id)

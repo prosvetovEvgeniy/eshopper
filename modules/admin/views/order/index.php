@@ -15,18 +15,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Order', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php //echo Html::a('Create Order', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
             'created_at',
             'updated_at',
-            'qty',
-            'sum',
+            'amount',
+            'totalSum',
             [
                 'attribute' => 'status',
                 'value' => function($data) {
@@ -40,7 +41,11 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'phone',
             // 'address',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {view}',
+                //'template' => '{update} {view} {delete}',
+            ],
         ],
     ]); ?>
 </div>
