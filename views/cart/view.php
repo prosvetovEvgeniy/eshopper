@@ -66,10 +66,10 @@ use yii\widgets\ActiveForm;
         <hr/>
 
         <?php $form = ActiveForm::begin() ?>
-            <?= $form->field($order, 'name') ?>
-            <?= $form->field($order, 'email') ?>
-            <?= $form->field($order, 'phone') ?>
-            <?= $form->field($order, 'address') ?>
+            <?= $form->field($customer, 'name') ?>
+            <?= $form->field($customer, 'email') ?>
+            <?= $form->field($customer, 'phone') ?>
+            <?= $form->field($customer, 'address') ?>
             <?= Html::submitButton('Заказать', ['class' => 'btn btn-success']) ?>
         <?php $form = ActiveForm::end() ?>
         <br>

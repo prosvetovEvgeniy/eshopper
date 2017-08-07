@@ -38,10 +38,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => !$model->status ? '<span class="text-danger">Активен</span>' : '<span class="text-success">Завершен</span>',
                 'format' => 'html',
             ],
-            'name',
-            'email:email',
-            'phone',
-            'address',
+            [
+                'attribute' => 'name',
+                'value' => function($data){
+                    return $data->customer->name;
+                }
+            ],
+            [
+                'attribute' => 'email',
+                'value' => function($data){
+                    return $data->customer->email;
+                }
+            ],
+            [
+                'attribute' => 'phone',
+                'value' => function($data){
+                    return $data->customer->phone;
+                }
+            ],
+            [
+                'attribute' => 'address',
+                'value' => function($data){
+                    return $data->customer->address;
+                }
+            ],
         ],
     ]) ?>
 

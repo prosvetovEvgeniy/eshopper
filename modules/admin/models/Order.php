@@ -5,22 +5,6 @@ namespace app\modules\admin\models;
 use Yii;
 use yii\db\ActiveRecord;
 
-/**
- * This is the model class for table "order".
- *
- * @property integer $id
- * @property string $created_at
- * @property string $updated_at
- * @property integer $qty
- * @property double $sum
- * @property string $status
- * @property string $name
- * @property string $email
- * @property string $phone
- * @property string $address
- *
- * @property OrderItems[] $orderItems
- */
 class Order extends ActiveRecord
 {
     public static function tableName()
@@ -31,12 +15,10 @@ class Order extends ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at', 'name', 'email', 'phone', 'address'], 'required'],
+            [['created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['amount'], 'integer'],
-            [['totalSum'], 'number'],
             [['status'], 'string'],
-            [['name', 'email', 'phone', 'address'], 'string', 'max' => 255],
+            [['customer_id'], 'integer'],
         ];
     }
 
@@ -49,6 +31,7 @@ class Order extends ActiveRecord
             'amount' => 'Количество',
             'totalSum' => 'Сумма',
             'status' => 'Статус',
+            'customer_id' => 'Ид покупателя',
             'name' => 'Имя',
             'email' => 'Email',
             'phone' => 'Телефон',
@@ -65,8 +48,6 @@ class Order extends ActiveRecord
         }
 
         return $amount;
-
-        //return $this->hasMany(OrderItems::className(),['order_id' => 'id'])->sum('qty_item');
     }
 
     public function getTotalSum(){
@@ -78,8 +59,24 @@ class Order extends ActiveRecord
         }
 
         return $totalSum;
-
-        //return $this->hasMany(OrderItems::className(),['order_id' => 'id'])->sum('price * qty_item');
+    }
+    public function getName(){
+        return $this->customer->name;
+    }
+    public function getEmail(){
+        return $this->customer->email;
+    }
+    public function getPhone(){
+        return $this->customer->phone;
+    }
+    public function getAddress(){
+        return $this->customer->address;
+    }
+    /*public function getEmail(){
+        return $this->customer->email;
+    }*/
+    public function getCustomer(){
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 
     public function getOrderItems()

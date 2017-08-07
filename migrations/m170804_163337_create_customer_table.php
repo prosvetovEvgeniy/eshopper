@@ -72,7 +72,7 @@ class m170804_163337_create_customer_table extends Migration
             }
         }
     }
-    
+
     public function down()
     {
         $this->dropTable('customer');

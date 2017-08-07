@@ -5,6 +5,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use Yii;
+use app\models\Customer;
 
 
 class Order extends ActiveRecord
@@ -32,21 +33,21 @@ class Order extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'email', 'phone', 'address'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['status'], 'boolean'],
-            [['name', 'email', 'phone', 'address'], 'string', 'max' => 255],
+            [['customer_id'], 'integer'],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            'name' => 'Имя',
-            'email' => 'Email',
-            'phone' => 'Телефон',
-            'address' => 'Адрес',
+
         ];
+    }
+
+    public function getCustomer(){
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
     }
 
     public function getOrderItems()

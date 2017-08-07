@@ -9,6 +9,7 @@
 namespace app\controllers;
 
 use app\models\Category;
+use app\models\Customer;
 use app\models\Product;
 use app\models\Cart;
 use app\models\Order;
@@ -90,38 +91,73 @@ class CartController extends AppController
         $session->open();
 
         $order = new Order();
+        $customer = new Customer();
 
         //заполняем модель необходимыми данными
-        if($order->load((Yii::$app->request->post()))){
+        if($customer->load((Yii::$app->request->post()))){
 
-           if($order->save()){
+            $customerExists = Customer::find()->where("email = '{$customer->email}'")->one();
 
-               $this->saveOrderItems($session['cart'], $order->id);
-               Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+            if($customerExists){
 
-               //отпраляем сообщение пользователю на email (пока локально)
-               Yii::$app->mailer->compose('order',['session' => $session])
-                   ->setFrom(['test@yandex.ru' => 'eshopper'])
-                        ->setTo($order->email)
-                            ->setSubject('Заказ')->send();
+                $customerExists->name = $customer->name;
+                $customerExists->email = $customer->email;
+                $customerExists->phone = $customer->phone;
+                $customerExists->address = $customer->address;
 
-               //очищаем сессию
-               $session->remove('cart');
-               $session->remove('cart.qty');
-               $session->remove('cart.sum');
+                $customerExists->save();
 
-               //сбрасываем данные формы
-               return $this->refresh();
-           }
-           else{
-               //если форма не провалидировалсь
-               Yii::$app->session->setFlash('error', 'Ошибка оформления заказа');
-           }
+                $order->customer_id = $customerExists->id;
+                $order->save();
+
+                $this->saveOrderItems($session['cart'], $order->id);
+
+                $this->sendEmail($customerExists->email, $session);
+
+                //сбрасываем данные формы
+                return $this->refresh();
+            }
+            else{
+                if($customer->save()){
+
+                    $order->customer_id = $customer->id;
+                    $order->save();
+
+                    $this->saveOrderItems($session['cart'], $order->id);
+
+                    Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+
+                    $this->sendEmail($customer->email, $session);
+
+                    //сбрасываем данные формы
+                    return $this->refresh();
+                }
+                else{
+                    //если форма не провалидировалсь
+                    Yii::$app->session->setFlash('error', 'Ошибка оформления заказа');
+                }
+            }
         }
 
         $this->setMetaTags('Корзина');
-        return $this->render('view', compact('session','order'));
+        return $this->render('view', compact('session','customer'));
     }
+
+    public function sendEmail($email, $session){
+        Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+
+        //отпраляем сообщение пользователю на email (пока локально)
+        Yii::$app->mailer->compose('order',['session' => $session])
+            ->setFrom(['test@yandex.ru' => 'eshopper'])
+            ->setTo($email)
+            ->setSubject('Заказ')->send();
+
+        //очищаем сессию
+        $session->remove('cart');
+        $session->remove('cart.qty');
+        $session->remove('cart.sum');
+    }
+
     //данный метод сохраняет данные каждого товара в таблицу order_items
     private function saveOrderItems($items,$order_id){
 

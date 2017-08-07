@@ -19,13 +19,14 @@ class OrderSearch extends Order
 {
     public $amount;
     public $totalSum;
+    //public $email;
 
-    public function rules()
-    {
+    public function rules() {
         return [
-
+            /* другие правила */
         ];
     }
+
 
     public function scenarios()
     {
@@ -45,12 +46,6 @@ class OrderSearch extends Order
             'query' => $query,
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            return $dataProvider;
-        }
-
         $dataProvider->setSort([
             'attributes'=>[
                 'id',
@@ -65,12 +60,17 @@ class OrderSearch extends Order
                     'desc'=>['orderData.price'=>SORT_DESC],
                 ],
                 'status',
-                'name',
-                'email',
-                'phone',
-                'address',
+                'customer_id',
             ]
         ]);
+
+
+        $this->load($params);
+
+        if (!$this->validate()) {
+            $query->joinWith(['customer']);
+            return $dataProvider;
+        }
 
         $query->andFilterWhere([
             'id' => $this->id,
@@ -78,14 +78,11 @@ class OrderSearch extends Order
             'updated_at' => $this->updated_at,
             'orderData.amount'=>$this->amount,
             'orderData.price'=>$this->totalSum,
+            'customer_id' => $this->customer_id,
         ]);
 
 
-        $query->andFilterWhere(['like', 'status', $this->status])
-            ->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'phone', $this->phone])
-            ->andFilterWhere(['like', 'address', $this->address]);
+        $query->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;
     }

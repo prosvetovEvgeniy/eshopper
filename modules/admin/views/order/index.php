@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use yii\db\Query;
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -17,7 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php //echo Html::a('Create Order', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -35,6 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     return !$data->status ? '<span class="text-danger">Активен</span>' : '<span class="text-success">Завершен</span>';
                 },
                 'format' => 'html',
+            ],
+            [
+                'attribute' => 'customer_id',
+                'value' => function($data){
+                    return $data->customer->email;
+                },
+                'label' => 'Email',
             ],
             // 'status',
             // 'name',

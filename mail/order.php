@@ -12,10 +12,10 @@
                 <tbody>
                 <?php foreach($session['cart'] as $id => $item) : ?>
                     <tr>
-                        <td><?= $item['name']; ?></td>
-                        <td><?= $item['qty']; ?></td>
-                        <td><?= $item['price']; ?></td>
-                        <td><?= $item['price']*$item['qty'] ?></td>
+                        <td><?php $item['name']; ?></td>
+                        <td><?php $item['qty']; ?></td>
+                        <td><?php $item['price']; ?></td>
+                        <td><?php $item['price']*$item['qty'] ?></td>
                     </tr>
                 <?php endforeach; ?>
                 <tr>
