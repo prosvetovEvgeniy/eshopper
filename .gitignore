@@ -32,3 +32,5 @@ tests/_support/_generated
 web/upload/cache/*
 web/upload/global/*
 web/upload/store/*
+config/wep.php
+config/db.php

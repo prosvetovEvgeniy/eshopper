@@ -19,8 +19,8 @@
 	  //отправляем данные на сервер
 	  $.ajax({
 		  url: '/cart/add',
+          type: 'POST',
 		  data: {id: id, qty: qty},
-		  type: 'GET',
 		  success: function (res) {
 		  	showCart(res);
           },
@@ -54,7 +54,7 @@
         $.ajax({
             url: '/cart/delete-item',
 			data: {id: id},
-            type: 'GET',
+            type: 'POST',
             success: function (res) {
                 if(!res) alert('Ошибка!');
 

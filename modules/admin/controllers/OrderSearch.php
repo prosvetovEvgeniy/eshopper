@@ -35,7 +35,7 @@ class OrderSearch extends Order
 
     public function search($params)
     {
-        $query = Order::find();
+        $query = Order::find()->with('customer');
         $subQuery = OrderItems::find()
             ->select('order_id, SUM(qty_item) as amount, SUM(price * qty_item) as price')
             ->groupBy('order_id');

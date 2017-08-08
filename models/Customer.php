@@ -25,9 +25,6 @@ class Customer extends \yii\db\ActiveRecord
         return 'customer';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [

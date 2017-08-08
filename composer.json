@@ -21,7 +21,8 @@
         "mihaildev/yii2-ckeditor": "*",
         "mihaildev/yii2-elfinder": "*",
         "yiisoft/yii2-jui": "^2.0",
-        "costa-rico/yii2-images": "dev-master"
+        "costa-rico/yii2-images": "dev-master",
+        "thamtech/yii2-uuid": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

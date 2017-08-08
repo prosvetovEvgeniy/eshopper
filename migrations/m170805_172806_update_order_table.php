@@ -13,8 +13,10 @@ class m170805_172806_update_order_table extends Migration
 
         $this->alterColumn('order', 'status', $this->boolean()->notNull()->defaultValue(0));
 
-        foreach ($statuses as $status){
-            $this->update('order',  ['status' => 0], "id = {$status['id']}");
+        if($statuses) {
+            foreach ($statuses as $status) {
+                $this->update('order', ['status' => 0], "id = {$status['id']}");
+            }
         }
 
         //добавляем внешний ключ customer_id

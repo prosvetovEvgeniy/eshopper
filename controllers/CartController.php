@@ -22,12 +22,14 @@ class CartController extends AppController
 {
     //добавляет товар в корзину
     public function actionAdd(){
+
         //получаем id товара и количество qty
-        $id = Yii::$app->request->get('id');
-        $qty = (int) Yii::$app->request->get('qty');
+        $id = Yii::$app->request->post('id');
+        $qty = (int) Yii::$app->request->post('qty');
 
         //если товар добавляется в корзину не из контроллера products
         //а из контроллера category, то количество товара по умолчанию 1
+
         $qty = !$qty ? 1 : $qty;
 
         $product = Product::findOne($id);
@@ -63,7 +65,7 @@ class CartController extends AppController
     }
     //удаляет определенный товар из корзины
     public function actionDeleteItem(){
-        $id = Yii::$app->request->get('id');
+        $id = Yii::$app->request->post('id');
 
         $session = Yii::$app->session;
         $session->open();
