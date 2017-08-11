@@ -1,4 +1,4 @@
-<?php if(!empty($session['cart'])) : ?>
+<?php if(!empty($items)) : ?>
     <div class="table-responsive">
         <table class="table table-hover table-striped">
             <thead>
@@ -11,22 +11,22 @@
                 </tr>
             </thead>
             <tbody>
-            <?php foreach($session['cart'] as $id => $item) : ?>
+            <?php foreach($items as $item) : ?>
                 <tr>
-                    <td><?= \yii\helpers\Html::img("{$item['img']}", ['alt' => $item['name'], 'height' => 50]) ?></td>
-                    <td><?= $item['name']; ?></td>
-                    <td><?= $item['qty']; ?></td>
-                    <td><?= $item['price']; ?></td>
-                    <td><span data-id="<?= $id; ?>" class="glyphicon glyphicon-remove text-danger del-item"></span></td>
+                    <td><?= \yii\helpers\Html::img("{$item->product->getImage()->getUrl()}", ['alt' => $item->product->name, 'height' => 50]) ?></td>
+                    <td><?= $item->product->name; ?></td>
+                    <td><?= $item->amount; ?></td>
+                    <td><?= $item->product->price; ?></td>
+                    <td><span data-id="<?= $item->product_id ?>" class="glyphicon glyphicon-remove text-danger del-item"></span></td>
                 </tr>
             <?php endforeach; ?>
                 <tr>
                     <td colspan="4">Итого</td>
-                    <td><?= $session['cart.qty'] ?></td>
+                    <td></td>
                 </tr>
             <tr>
                 <td colspan="4">На сумму</td>
-                <td><?= $session['cart.sum'] ?></td>
+                <td></td>
             </tr>
             </tbody>
         </table>

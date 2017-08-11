@@ -31,6 +31,7 @@ class AppAsset extends AssetBundle
         'js/jquery.prettyPhoto.js',
         'js/jquery.cookie.js',
         'js/jquery.accordion.js',
+        'js/jquery-cookie-master/src/jquery.cookie.js',
         'js/main.js',
     ];
     public $depends = [

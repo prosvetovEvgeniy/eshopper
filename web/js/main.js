@@ -16,48 +16,57 @@
 	  var id = $(this).data() ;
 	  var qty = $('#qty').val();
 
+      //$.removeCookie('uuid');
+      if(typeof $.cookie('uuid') == "undefined"){
+          $.cookie('uuid', uuid(), { expires: 30 });
+      }
+
 	  //отправляем данные на сервер
 	  $.ajax({
 		  url: '/cart/add',
           type: 'POST',
 		  data: {id: id, qty: qty},
 		  success: function (res) {
-		  	showCart(res);
+		      //console.log(res);
+		      showCart(res);
           },
-		  error: function () {
+		  error: function (e) {
+		      console.log(e);
 			  alert('Error');
           }
 	  });
   });
+  
   //отображает корзину
   function showCart(cart) {
 	  $('#cart .modal-body').html(cart);
 	  $('#cart').modal();
   }
-	function clearCart() {
+    function clearCart() {
         $.ajax({
             url: '/cart/clear',
             type: 'GET',
             success: function (res) {
 				if(!res) alert('Ошибка!');
+				//console.log(res);
 				showCart(res);
             },
-            error: function () {
-                alert('Error');
+            error: function (e) {
+                console.log(e);
+                //alert('Error');
             }
         });
 	}
 	//срабатывает при нажатии на кнопку удалить товар(крестик) в модальном окне корзины
 	$('#cart .modal-body').on('click', '.del-item',function () {
-		var id = $(this).data('id');
+		var product_id = $(this).data('id');
 
         $.ajax({
             url: '/cart/delete-item',
-			data: {id: id},
+			data: {product_id: product_id},
             type: 'POST',
             success: function (res) {
                 if(!res) alert('Ошибка!');
-
                 showCart(res);
             },
             error: function () {
@@ -79,7 +88,15 @@
         });
 		return false;
     }
-    fu
+    function uuid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
 /*scroll to top*/
 
 $(document).ready(function(){

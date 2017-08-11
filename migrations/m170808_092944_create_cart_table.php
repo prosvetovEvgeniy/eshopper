@@ -16,7 +16,7 @@ class m170808_092944_create_cart_table extends Migration
             'id' => $this->string('36')->notNull(),
             'customer_id' => $this->integer(),
         ]);
-
+        $this->addPrimaryKey('cart_id', 'cart', 'id');
         $this->addForeignKey('cart_customer_id', 'cart', 'customer_id','customer','id');
     }
 

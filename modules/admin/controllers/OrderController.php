@@ -10,6 +10,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use thamtech\uuid\helpers\UuidHelper;
+use app\models\CartTable;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -34,6 +36,10 @@ class OrderController extends Controller
         $searchModel = new OrderSearch();
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        unset($_COOKIE['uuid']);
+        setcookie('uuid', '', time() - 3600*12*30);
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,

@@ -8,6 +8,8 @@
 
 namespace app\controllers;
 
+use app\models\CartItems;
+use app\models\CartTable;
 use app\models\Category;
 use app\models\Customer;
 use app\models\Product;
@@ -16,6 +18,7 @@ use app\models\Order;
 use app\models\OrderItems;
 use Yii;
 use yii\web\HttpException;
+use thamtech\uuid\helpers\UuidHelper;
 
 //контроллер отвечающий за работу с корзиной
 class CartController extends AppController
@@ -27,8 +30,16 @@ class CartController extends AppController
         $id = Yii::$app->request->post('id');
         $qty = (int) Yii::$app->request->post('qty');
 
-        //если товар добавляется в корзину не из контроллера products
-        //а из контроллера category, то количество товара по умолчанию 1
+        $recordExists = Cart::findOne(['id' => $_COOKIE['uuid']]);
+        if(!$recordExists){
+            $cart = new Cart();
+            $cart->id = $_COOKIE['uuid'];
+            $cart->save();
+        }
+        else{
+            $cart = $recordExists;
+        }
+
 
         $qty = !$qty ? 1 : $qty;
 
@@ -36,60 +47,73 @@ class CartController extends AppController
 
         if(empty($product)) return false;
 
-        //открываем сессию
-        $session = Yii::$app->session;
-        $session->open();
-
-        //добавляем товар в session['cart']
-        $cart = new Cart();
-        $cart->addToCart($product, $qty);
+        $cartItem = new CartItems();
+        $cartItem->addToCart($cart->id,$product->id, $qty);
 
         if(!Yii::$app->request->isAjax){
             return $this->redirect(Yii::$app->request->referrer);
         }
+
+        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+
         //отключаем layout и показываем шаблон
         $this->layout = false;
-        return $this->render('cart-modal', compact('session'));
+        return $this->render('cart-modal', ['items' => $items]);
     }
     //очищает сессию с данными о заказах
     public function actionClear(){
-        $session = Yii::$app->session;
 
-        $session->open();
-        $session->remove('cart');
-        $session->remove('cart.qty');
-        $session->remove('cart.sum');
+        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
+
+        if(!$cart){
+            return false;
+        }
+
+        CartItems::deleteAll(['cart_id' => $cart->id]);
 
         $this->layout = false;
-        return $this->render('cart-modal', compact('session'));
+        return $this->render('cart-modal');
     }
+
     //удаляет определенный товар из корзины
     public function actionDeleteItem(){
-        $id = Yii::$app->request->post('id');
 
-        $session = Yii::$app->session;
-        $session->open();
+        $productId = Yii::$app->request->post('product_id');
 
-        $cart = new Cart();
-        $cart->recalculate($id);
+        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
+
+        if(!$cart){
+            return false;
+        }
+
+        $cartItem = new CartItems();
+        $cartItem->removeItem($cart->id, $productId);
+
+        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
 
         $this->layout = false;
-        return $this->render('cart-modal', compact('session'));
+        return $this->render('cart-modal', ['items' => $items]);
+
     }
 
     //отображает корзину при отключенном javascript
     public function actionShow(){
-        $session = Yii::$app->session;
+        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
 
-        $session->open();
+        if(!$cart){
+            return false;
+        }
 
+        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+
+        //отключаем layout и показываем шаблон
         $this->layout = false;
-        return $this->render('cart-modal', compact('session'));
+        return $this->render('cart-modal', ['items' => $items]);
     }
     //отображает корзину при оформлении заказа и при отправке формы заполняет модель OrderItems
     public function actionView(){
 
-        $session = Yii::$app->session;
+        /*$session = Yii::$app->session;
         $session->open();
 
         $order = new Order();
@@ -139,10 +163,23 @@ class CartController extends AppController
                     Yii::$app->session->setFlash('error', 'Ошибка оформления заказа');
                 }
             }
+        }*/
+        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
+
+        if(!$cart){
+            return false;
         }
 
+        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+
+
         $this->setMetaTags('Корзина');
-        return $this->render('view', compact('session','customer'));
+        return $this->render('view', ['items' => $items,
+                                            'totalAmount' => CartItems::getTotalAmount($cart->id),
+                                            'totalPrice' => CartItems::getTotalPrice($cart->id),
+        ]);
+
+        //return $this->render('view', compact('session','customer'));
     }
 
     public function sendEmail($email, $session){
