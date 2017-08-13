@@ -102,17 +102,22 @@ AppAsset::register($this);
 							<ul class="nav navbar-nav">
 
                                 <?php if(!Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
+                                    <li><a href="<?php //echo Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
                                 <?php endif; ?>
 
-								<!-- <li><a href="#"><i class="fa fa-star"></i> Wishlist</a></li>
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
-								<li><a href="<?= Url::to(['cart/view']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
+                                <li><a href="<?= Url::to(['site/destroy']) ?>"><i class="fa fa-shopping-cart"></i> Destroy </a></li>
 
                                 <?php if(Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Войти</a></li>
+
+                                    <li><a href="<?= Url::to(['cart/view-guest']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
+                                    <li><a href="<?= Url::to(['/site/login']);?>"><i class="fa fa-lock"></i> Войти</a></li>
+                                    <li><a href="<?= Url::to(['/site/signup']);?>"><i class="fa fa-lock"></i> Зарегистрироваться </a></li>
+
                                 <?php else: ?>
-                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['username'] ?>)</a></li>
+
+								    <li><a href="<?= Url::to(['cart/view']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
+                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['email'] ?>)</a></li>
+
                                 <?php endif; ?>
 
                             </ul>

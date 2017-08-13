@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use thamtech\uuid\helpers\UuidHelper;
 
 class Cart extends \yii\db\ActiveRecord
 {
@@ -28,6 +29,25 @@ class Cart extends \yii\db\ActiveRecord
             'id' => 'ID',
             'customer_id' => 'Customer ID',
         ];
+    }
+    //создает новое поля в таблице Cart с id и customer_id
+    public function setNewCustomer($email){
+        $customer = Customer::findOne(['email' => $email]);
+
+        $uuid = UuidHelper::uuid();
+        $this->id = $uuid;
+        $this->customer_id = $customer->id;
+
+        $this->save();
+    }
+    //добавляет customer_id при существующем id
+    public function addCustomerId($id, $email){
+
+        $cart = self::findOne(['id' => $id]);
+        $customer = Customer::findOne(['email' => $email]);
+
+        $cart->customer_id = $customer->id;
+        $cart->save();
     }
 
     public function getCustomer()

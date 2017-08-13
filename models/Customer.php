@@ -3,52 +3,52 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
-/**
- * This is the model class for table "customer".
- *
- * @property integer $id
- * @property string $name
- * @property string $email
- * @property string $phone
- * @property string $address
- *
- * @property Order[] $orders
- */
-class Customer extends \yii\db\ActiveRecord
+
+class Customer extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
         return 'customer';
     }
 
-    public function rules()
-    {
-        return [
-            [['name', 'email', 'phone', 'address'], 'required'],
-            [['name', 'email', 'phone', 'address'], 'string', 'max' => 255],
-        ];
+    public static function findIdentity($id){
+        return self::findOne($id);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'Ид',
-            'name' => 'Имя',
-            'email' => 'Email',
-            'phone' => 'Телефон',
-            'address' => 'Адрес',
-        ];
+    public function getId(){
+        return $this->id;
     }
 
-    public function getOrders()
-    {
-        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+    public static function findIdentityByAccessToken($token, $type = null){
+
+    }
+
+    public function getAuthKey(){
+
+    }
+
+    public function validateAuthKey($authKey){
+
+    }
+
+    public function setPassword($pass){
+        $this->password = Yii::$app->getSecurity()->generatePasswordHash($pass);
+    }
+
+    public function setUuid($customer){
+        $cart = Cart::findOne(['customer_id' => $customer->id]);
+
+        setcookie('uuid', $cart->id,time() + 3600*24*60, "/");
+    }
+    public function validatePassword($pass){
+
+        if(Yii::$app->getSecurity()->validatePassword($pass, $this->password)){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }

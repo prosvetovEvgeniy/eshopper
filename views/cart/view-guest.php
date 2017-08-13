@@ -65,7 +65,13 @@ use yii\widgets\ActiveForm;
         </div>
         <hr/>
 
+        <?php if(Yii::$app->user->isGuest): ?>
+
             <?php $form = ActiveForm::begin(['class' => 'form-horizontal']); ?>
+
+            <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+
+            <?= $form->field($model, 'email')->textInput() ?>
 
             <?= $form->field($model, 'phone')->textInput() ?>
 
@@ -74,6 +80,9 @@ use yii\widgets\ActiveForm;
             <?= Html::submitButton('Оформить покупку', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
 
             <?php ActiveForm::end(); ?>
+
+        <?php else : ?>
+        <?php endif; ?>
 
         <br>
         <br>

@@ -37,9 +37,6 @@ class OrderController extends Controller
 
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        unset($_COOKIE['uuid']);
-        setcookie('uuid', '', time() - 3600*12*30);
-
 
         return $this->render('index', [
             'searchModel' => $searchModel,

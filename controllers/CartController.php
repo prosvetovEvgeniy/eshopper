@@ -8,6 +8,7 @@
 
 namespace app\controllers;
 
+use app\models\AddCustomerDataForm;
 use app\models\CartItems;
 use app\models\CartTable;
 use app\models\Category;
@@ -16,6 +17,8 @@ use app\models\Product;
 use app\models\Cart;
 use app\models\Order;
 use app\models\OrderItems;
+use app\models\QuickSignup;
+use app\models\Signup;
 use Yii;
 use yii\web\HttpException;
 use thamtech\uuid\helpers\UuidHelper;
@@ -110,104 +113,111 @@ class CartController extends AppController
         $this->layout = false;
         return $this->render('cart-modal', ['items' => $items]);
     }
-    //отображает корзину при оформлении заказа и при отправке формы заполняет модель OrderItems
+    //корзина для зарегистрированного пользователя
     public function actionView(){
 
-        /*$session = Yii::$app->session;
-        $session->open();
+        $model = new AddCustomerDataForm();
 
-        $order = new Order();
-        $customer = new Customer();
+        $customer = Customer::findOne(['id' => Yii::$app->user->id]);
 
-        //заполняем модель необходимыми данными
-        if($customer->load((Yii::$app->request->post()))){
-
-            $customerExists = Customer::find()->where("email = '{$customer->email}'")->one();
-
-            if($customerExists){
-
-                $customerExists->name = $customer->name;
-                $customerExists->email = $customer->email;
-                $customerExists->phone = $customer->phone;
-                $customerExists->address = $customer->address;
-
-                $customerExists->save();
-
-                $order->customer_id = $customerExists->id;
-                $order->save();
-
-                $this->saveOrderItems($session['cart'], $order->id);
-
-                $this->sendEmail($customerExists->email, $session);
-
-                //сбрасываем данные формы
-                return $this->refresh();
-            }
-            else{
-                if($customer->save()){
-
-                    $order->customer_id = $customer->id;
-                    $order->save();
-
-                    $this->saveOrderItems($session['cart'], $order->id);
-
-                    Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
-
-                    $this->sendEmail($customer->email, $session);
-
-                    //сбрасываем данные формы
-                    return $this->refresh();
-                }
-                else{
-                    //если форма не провалидировалсь
-                    Yii::$app->session->setFlash('error', 'Ошибка оформления заказа');
-                }
-            }
-        }*/
-        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
-
-        if(!$cart){
-            return false;
-        }
-
+        $cart = Cart::findOne(['customer_id' => $customer->id]);
         $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
 
+        if($model->load(Yii::$app->request->post())){
 
-        $this->setMetaTags('Корзина');
-        return $this->render('view', ['items' => $items,
-                                            'totalAmount' => CartItems::getTotalAmount($cart->id),
-                                            'totalPrice' => CartItems::getTotalPrice($cart->id),
+            if($model->validate() && $model->addData($customer->email)){
+
+                //заполняем таблицу order
+                $order = new Order();
+                $order->customer_id = $customer->id;
+                $order->save();
+
+                //сохраняем данные в таблицу OrderItems
+                $this->saveOrderItems($items, $order->id);
+
+                //отправляем пользователю сообщение на почту
+                $this->sendEmail($customer->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id));
+
+                //удаляем товары из корзины
+                CartItems::deleteAll(['cart_id' => $cart->id]);
+
+                Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+                return $this->refresh();
+            }
+        }
+
+        return $this->render('view', [
+            'items' => $items,
+            'model' => $model,
+            'totalAmount' => CartItems::getTotalAmount($cart->id),
+            'totalPrice' => CartItems::getTotalPrice($cart->id),
         ]);
-
-        //return $this->render('view', compact('session','customer'));
     }
 
-    public function sendEmail($email, $session){
-        Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+    //корзина для незарегистрированного пользователя
+    public function actionViewGuest(){
 
+        $model = new QuickSignup();
+
+        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
+        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+
+        if($model->load(Yii::$app->request->post())){
+
+            $password = Yii::$app->getSecurity()->generateRandomString(8);
+
+            if($model->validate() && $model->signup($password)){
+
+                //записываем id пользователя для уже существующей записи в таблице cart
+                Cart::addCustomerId($_COOKIE['uuid'], $model->email);
+
+                //заполняем таблицу order
+                $order = new Order();
+                $order->customer_id = $model->getCustomerId();
+                $order->save();
+
+                //сохраняем данные в таблицу OrderItems
+                $this->saveOrderItems($items, $order->id);
+
+                //отправляем пользователю сообщение на почту
+                $this->sendEmail($model->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id), $password);
+
+                //удаляем товары из корзины
+                CartItems::deleteAll(['cart_id' => $cart->id]);
+                //создаем новый uuid в куки
+                setcookie('uuid', UuidHelper::uuid(), time() + 3600*24*30, '/');
+
+                Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+                return $this->refresh();
+            }
+        }
+
+        return $this->render('view-guest', [
+            'items' => $items,
+            'model' => $model,
+            'totalAmount' => CartItems::getTotalAmount($cart->id),
+            'totalPrice' => CartItems::getTotalPrice($cart->id),
+        ]);
+    }
+
+    public function sendEmail($email, $items, $totalAmount, $totalPrice, $password = null){
         //отпраляем сообщение пользователю на email (пока локально)
-        Yii::$app->mailer->compose('order',['session' => $session])
+        Yii::$app->mailer->compose('order',['items' => $items, 'password' => $password, 'totalAmount' => $totalAmount, 'totalPrice' => $totalPrice])
             ->setFrom(['test@yandex.ru' => 'eshopper'])
             ->setTo($email)
             ->setSubject('Заказ')->send();
-
-        //очищаем сессию
-        $session->remove('cart');
-        $session->remove('cart.qty');
-        $session->remove('cart.sum');
     }
 
     //данный метод сохраняет данные каждого товара в таблицу order_items
     private function saveOrderItems($items,$order_id){
 
-        foreach ($items as $id => $item){
-
+        foreach ($items as $item){
             $order_items = new OrderItems();
             $order_items->order_id = $order_id; //номер заказа
-            $order_items->product_id = $id; //ид товара
-            $order_items->name = $item['name']; //название (на момент заказа)
-            $order_items->price = $item['price']; //цену (на момент заказа)
-            $order_items->qty_item = $item['qty']; //количество
+            $order_items->product_id = $item->product->id; //ид товара
+            $order_items->name = $item->product->name; //название (на момент заказа)
+            $order_items->price = $item->product->price; //цену (на момент заказа)
+            $order_items->qty_item = $item->amount; //количество
             $order_items->save();
         }
 

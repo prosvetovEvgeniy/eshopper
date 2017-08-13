@@ -38,7 +38,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Customer',
             'enableAutoLogin' => true,
             //'loginUrl' => 'cart/view'
         ],
@@ -74,6 +74,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'cart/viewGuest' => 'cart/view-guest',
                 'category/<id:\d+>/page/<page:\d+>' => 'category/view',
                 'category/<id:\d+>' => 'category/view',
                 'product/view/<id:\d+>' => 'product/view',

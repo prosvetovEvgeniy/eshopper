@@ -114,7 +114,6 @@ AppAsset::register($this);
                                 <?php else: ?>
                                     <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['username'] ?>)</a></li>
                                 <?php endif; ?>
-
                             </ul>
                         </div>
                     </div>
