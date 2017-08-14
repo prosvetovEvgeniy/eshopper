@@ -4,25 +4,15 @@ namespace app\modules\admin\models;
 
 use Yii;
 
-/**
- * This is the model class for table "customer".
- *
- * @property integer $id
- * @property string $name
- * @property string $email
- * @property string $phone
- * @property string $address
- *
- * @property Order[] $orders
- */
-class Customer extends \yii\db\ActiveRecord
+
+class User extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'customer';
+        return 'user';
     }
 
     /**
@@ -52,6 +42,6 @@ class Customer extends \yii\db\ActiveRecord
 
     public function getOrders()
     {
-        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+        return $this->hasMany(Order::className(), ['user_id' => 'id']);
     }
 }

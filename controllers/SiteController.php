@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\models\Cart;
-use app\models\Customer;
+use app\models\User;
 use app\models\Signup;
 use Yii;
 use yii\filters\AccessControl;
@@ -84,7 +84,7 @@ class SiteController extends Controller
             if($model->validate()){
                 Yii::$app->user->login($model->getUser());
 
-                Customer::setUuid($model->getUser());
+                User::setUuid($model->getUser());
                 return $this->goHome();
             }
         }
@@ -111,7 +111,7 @@ class SiteController extends Controller
             if($model->validate() && $model->signup()){
 
                 $cart = new Cart();
-                $cart->setNewCustomer($model->email);
+                $cart->setNewUser($model->email);
 
                 return $this->goHome();
             }

@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use thamtech\uuid\helpers\UuidHelper;
+use app\models\User;
 
 class Cart extends \yii\db\ActiveRecord
 {
@@ -17,9 +18,9 @@ class Cart extends \yii\db\ActiveRecord
     {
         return [
             [['id'], 'required'],
-            [['customer_id'], 'integer'],
+            [['user_id'], 'integer'],
             [['id'], 'string', 'max' => 36],
-            [['customer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Customer::className(), 'targetAttribute' => ['customer_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -27,32 +28,32 @@ class Cart extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'customer_id' => 'Customer ID',
+            'user_id' => 'User ID',
         ];
     }
-    //создает новое поля в таблице Cart с id и customer_id
-    public function setNewCustomer($email){
-        $customer = Customer::findOne(['email' => $email]);
+    //создает новое поля в таблице Cart с id и user_id
+    public function setNewUser($email){
+        $user = User::findOne(['email' => $email]);
 
         $uuid = UuidHelper::uuid();
         $this->id = $uuid;
-        $this->customer_id = $customer->id;
+        $this->user_id = $user->id;
 
         $this->save();
     }
-    //добавляет customer_id при существующем id
-    public function addCustomerId($id, $email){
+    //добавляет user_id при существующем id
+    public function addUserId($id, $email){
 
         $cart = self::findOne(['id' => $id]);
-        $customer = Customer::findOne(['email' => $email]);
+        $user = User::findOne(['email' => $email]);
 
-        $cart->customer_id = $customer->id;
+        $cart->user_id = $user->id;
         $cart->save();
     }
 
-    public function getCustomer()
+    public function getUser()
     {
-        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     public function getCartItems()

@@ -5,7 +5,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use Yii;
-use app\models\Customer;
+use app\models\User;
 
 
 class Order extends ActiveRecord
@@ -35,7 +35,7 @@ class Order extends ActiveRecord
         return [
             [['created_at', 'updated_at'], 'safe'],
             [['status'], 'boolean'],
-            [['customer_id'], 'integer'],
+            [['user_id'], 'integer'],
         ];
     }
 
@@ -46,8 +46,8 @@ class Order extends ActiveRecord
         ];
     }
 
-    public function getCustomer(){
-        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+    public function getUser(){
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     public function getOrderItems()

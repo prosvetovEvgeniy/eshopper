@@ -5,12 +5,10 @@ namespace app\modules\admin\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\modules\admin\models\Customer;
+use app\modules\admin\models\User;
 
-/**
- * CustomerSearch represents the model behind the search form about `app\modules\admin\models\Customer`.
- */
-class CustomerSearch extends Customer
+
+class UserSearch extends User
 {
     /**
      * @inheritdoc
@@ -41,7 +39,7 @@ class CustomerSearch extends Customer
      */
     public function search($params)
     {
-        $query = Customer::find();
+        $query = User::find();
 
         // add conditions that should always apply here
 

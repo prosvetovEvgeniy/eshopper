@@ -38,9 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
             ],
             [
-                'attribute' => 'customer_id',
+                'attribute' => 'user_id',
                 'value' => function($data){
-                    return $data->customer->email;
+                    return $data->user->email;
                 },
                 'label' => 'Email',
             ],

@@ -10,6 +10,7 @@ namespace app\models;
 
 
 use yii\base\Model;
+use app\models\User;
 
 class QuickSignup extends Model
 {
@@ -24,7 +25,7 @@ class QuickSignup extends Model
             ['email', 'email'],
             ['phone', 'string'],
             ['address', 'string'],
-            ['email', 'unique', 'targetClass' => 'app\models\Customer'],
+            ['email', 'unique', 'targetClass' => 'app\models\User'],
         ];
     }
 
@@ -37,21 +38,21 @@ class QuickSignup extends Model
             'address' => 'Адрес',
         ];
     }
-    public function getCustomerId(){
-        $customer = Customer::findOne(['email' => $this->email]);
-        return $customer->id;
+    public function getUserId(){
+        $user = User::findOne(['email' => $this->email]);
+        return $user->id;
     }
     public function signup($password){
 
-        $customer = new Customer();
+        $user = new User();
 
-        $customer->name = $this->name;
-        $customer->email = $this->email;
-        $customer->phone = $this->phone;
-        $customer->address = $this->address;
-        $customer->setPassword($password);
+        $user->name = $this->name;
+        $user->email = $this->email;
+        $user->phone = $this->phone;
+        $user->address = $this->address;
+        $user->setPassword($password);
 
-        return $customer->save();
+        return $user->save();
     }
 
 }

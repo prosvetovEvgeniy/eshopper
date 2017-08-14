@@ -33,15 +33,15 @@ class LoginForm extends Model
 
     public function validatePassword($attribute, $params)
     {
-        $customer = Customer::findOne(['email' => $this->email]);
+        $user = User::findOne(['email' => $this->email]);
 
-        if(!$customer || !$customer->validatePassword($this->password))
+        if(!$user || !$user->validatePassword($this->password))
         {
             $this->addError($attribute, 'Пароль или пользователь введены не верно');
         }
     }
 
     public function getUser(){
-        return Customer::findOne(['email' => $this->email]);
+        return User::findOne(['email' => $this->email]);
     }
 }

@@ -38,7 +38,7 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\Customer',
+            'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
             //'loginUrl' => 'cart/view'
         ],

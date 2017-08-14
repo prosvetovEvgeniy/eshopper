@@ -8,11 +8,11 @@
 
 namespace app\controllers;
 
-use app\models\AddCustomerDataForm;
+use app\models\AddUserDataForm;
 use app\models\CartItems;
 use app\models\CartTable;
 use app\models\Category;
-use app\models\Customer;
+use app\models\User;
 use app\models\Product;
 use app\models\Cart;
 use app\models\Order;
@@ -118,27 +118,27 @@ class CartController extends AppController
     //корзина для зарегистрированного пользователя
     public function actionView(){
 
-        $model = new AddCustomerDataForm();
+        $model = new AddUserDataForm();
 
-        $customer = Customer::findOne(['id' => Yii::$app->user->id]);
+        $user = User::findOne(['id' => Yii::$app->user->id]);
 
-        $cart = Cart::findOne(['customer_id' => $customer->id]);
+        $cart = Cart::findOne(['user_id' => $user->id]);
         $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
 
         if($model->load(Yii::$app->request->post())){
 
-            if($model->validate() && $model->addData($customer->email)){
+            if($model->validate() && $model->addData($user->email)){
 
                 //заполняем таблицу order
                 $order = new Order();
-                $order->customer_id = $customer->id;
+                $order->user_id = $user->id;
                 $order->save();
 
                 //сохраняем данные в таблицу OrderItems
                 $this->saveOrderItems($items, $order->id);
 
                 //отправляем пользователю сообщение на почту
-                $this->sendEmail($customer->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id));
+                $this->sendEmail($user->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id));
 
                 //удаляем товары из корзины
                 CartItems::deleteAll(['cart_id' => $cart->id]);
@@ -171,11 +171,11 @@ class CartController extends AppController
             if($model->validate() && $model->signup($password)){
 
                 //записываем id пользователя для уже существующей записи в таблице cart
-                Cart::addCustomerId($cart->id, $model->email);
+                Cart::addUserId($cart->id, $model->email);
 
                 //заполняем таблицу order
                 $order = new Order();
-                $order->customer_id = $model->getCustomerId();
+                $order->user_id = $model->getUserId();
                 $order->save();
 
                 //сохраняем данные в таблицу OrderItems

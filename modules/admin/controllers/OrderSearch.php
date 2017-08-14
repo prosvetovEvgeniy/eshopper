@@ -35,7 +35,7 @@ class OrderSearch extends Order
 
     public function search($params)
     {
-        $query = Order::find()->with('customer');
+        $query = Order::find()->with('user');
         $subQuery = OrderItems::find()
             ->select('order_id, SUM(qty_item) as amount, SUM(price * qty_item) as price')
             ->groupBy('order_id');
@@ -60,7 +60,7 @@ class OrderSearch extends Order
                     'desc'=>['orderData.price'=>SORT_DESC],
                 ],
                 'status',
-                'customer_id',
+                'user_id',
             ]
         ]);
 
@@ -68,7 +68,7 @@ class OrderSearch extends Order
         $this->load($params);
 
         if (!$this->validate()) {
-            $query->joinWith(['customer']);
+            $query->joinWith(['user']);
             return $dataProvider;
         }
 
@@ -78,7 +78,7 @@ class OrderSearch extends Order
             'updated_at' => $this->updated_at,
             'orderData.amount'=>$this->amount,
             'orderData.price'=>$this->totalSum,
-            'customer_id' => $this->customer_id,
+            'user_id' => $this->user_id,
         ]);
 
 

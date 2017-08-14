@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: medve
  * Date: 14.08.2017
- * Time: 1:57
+ * Time: 17:16
  */
 
 namespace app\models;
@@ -11,7 +11,7 @@ namespace app\models;
 
 use yii\base\Model;
 
-class AddCustomerDataForm extends Model
+class AddUserDataForm extends Model
 {
     public $phone;
     public $address;
@@ -34,11 +34,11 @@ class AddCustomerDataForm extends Model
 
     public function addData($email){
 
-        $customer = Customer::findOne(['email' => $email]);
+        $user = User::findOne(['email' => $email]);
 
-        $customer->phone = $this->phone;
-        $customer->address = $this->address;
+        $user->phone = $this->phone;
+        $user->address = $this->address;
 
-        return $customer->save();
+        return $user->save();
     }
 }

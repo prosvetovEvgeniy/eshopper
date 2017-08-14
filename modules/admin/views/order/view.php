@@ -41,25 +41,25 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'name',
                 'value' => function($data){
-                    return $data->customer->name;
+                    return $data->user->name;
                 }
             ],
             [
                 'attribute' => 'email',
                 'value' => function($data){
-                    return $data->customer->email;
+                    return $data->user->email;
                 }
             ],
             [
                 'attribute' => 'phone',
                 'value' => function($data){
-                    return $data->customer->phone;
+                    return $data->user->phone;
                 }
             ],
             [
                 'attribute' => 'address',
                 'value' => function($data){
-                    return $data->customer->address;
+                    return $data->user->address;
                 }
             ],
         ],

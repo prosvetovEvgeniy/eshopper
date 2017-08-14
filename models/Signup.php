@@ -23,7 +23,7 @@ class Signup extends Model
         return [
             [['name', 'email', 'password'], 'required'],
             ['email', 'email'],
-            ['email', 'unique', 'targetClass' => 'app\models\Customer'],
+            ['email', 'unique', 'targetClass' => 'app\models\User'],
             ['password', 'string', 'min' => 2, 'max' => 10],
         ];
     }
@@ -38,16 +38,12 @@ class Signup extends Model
     }
 
     public function signup(){
-        $customer = new Customer();
+        $user = new User();
 
-        $customer->name = $this->name;
-        $customer->email = $this->email;
-        $customer->setPassword($this->password);
+        $user->name = $this->name;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
 
-        return $customer->save();
-    }
-
-    public function getCustomerId(){
-
+        return $user->save();
     }
 }

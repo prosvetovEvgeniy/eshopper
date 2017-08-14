@@ -18,7 +18,7 @@ class Order extends ActiveRecord
             [['created_at', 'updated_at'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
             [['status'], 'string'],
-            [['customer_id'], 'integer'],
+            [['user_id'], 'integer'],
         ];
     }
 
@@ -31,7 +31,7 @@ class Order extends ActiveRecord
             'amount' => 'Количество',
             'totalSum' => 'Сумма',
             'status' => 'Статус',
-            'customer_id' => 'Ид покупателя',
+            'user_id' => 'Ид покупателя',
             'name' => 'Имя',
             'email' => 'Email',
             'phone' => 'Телефон',
@@ -61,22 +61,20 @@ class Order extends ActiveRecord
         return $totalSum;
     }
     public function getName(){
-        return $this->customer->name;
+        return $this->user->name;
     }
     public function getEmail(){
-        return $this->customer->email;
+        return $this->user->email;
     }
     public function getPhone(){
-        return $this->customer->phone;
+        return $this->user->phone;
     }
     public function getAddress(){
-        return $this->customer->address;
+        return $this->user->address;
     }
-    /*public function getEmail(){
-        return $this->customer->email;
-    }*/
-    public function getCustomer(){
-        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+
+    public function getUser(){
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     public function getOrderItems()
