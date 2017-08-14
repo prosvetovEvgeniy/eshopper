@@ -102,7 +102,7 @@ AppAsset::register($this);
 							<ul class="nav navbar-nav">
 
                                 <?php if(!Yii::$app->user->isGuest): ?>
-                                    <li><a href="<?php //echo Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
+                                    <li><a href="<?php echo Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
                                 <?php endif; ?>
 
                                 <li><a href="<?= Url::to(['site/destroy']) ?>"><i class="fa fa-shopping-cart"></i> Destroy </a></li>
@@ -318,16 +318,28 @@ AppAsset::register($this);
 	</footer><!--/Footer-->
 
     <?php
-    Modal::begin([
-        'header' => '<h2>Корзина</h2>',
-        'id' => 'cart',
-        'size' => 'modal-lg',
-        'footer' => '<button type="button" class="btn btn-default" data-dismiss="modal">Продолжить покупки</button>
+    if(Yii::$app->user->isGuest){
+        Modal::begin([
+            'header' => '<h2>Корзина</h2>',
+            'id' => 'cart',
+            'size' => 'modal-lg',
+            'footer' => '<button type="button" class="btn btn-default" data-dismiss="modal">Продолжить покупки</button>
+                     <a href="' . Url::to(['cart/view-guest']) .'" type="button" class="btn btn-success">Оформить заказ</a>
+                     <button type="button" class="btn btn-danger" onclick="clearCart()">Очистить корзину</button>',
+        ]);
+        Modal::end();
+    }
+    else{
+        Modal::begin([
+            'header' => '<h2>Корзина</h2>',
+            'id' => 'cart',
+            'size' => 'modal-lg',
+            'footer' => '<button type="button" class="btn btn-default" data-dismiss="modal">Продолжить покупки</button>
                      <a href="' . Url::to(['cart/view']) .'" type="button" class="btn btn-success">Оформить заказ</a>
                      <button type="button" class="btn btn-danger" onclick="clearCart()">Очистить корзину</button>',
-    ]);
-
-    Modal::end();
+        ]);
+        Modal::end();
+    }
     ?>
 
     <?php $this->endBody() ?>

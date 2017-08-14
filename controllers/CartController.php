@@ -34,6 +34,7 @@ class CartController extends AppController
         $qty = (int) Yii::$app->request->post('qty');
 
         $recordExists = Cart::findOne(['id' => $_COOKIE['uuid']]);
+
         if(!$recordExists){
             $cart = new Cart();
             $cart->id = $_COOKIE['uuid'];
@@ -63,6 +64,7 @@ class CartController extends AppController
         $this->layout = false;
         return $this->render('cart-modal', ['items' => $items]);
     }
+    
     //очищает сессию с данными о заказах
     public function actionClear(){
 
@@ -169,7 +171,7 @@ class CartController extends AppController
             if($model->validate() && $model->signup($password)){
 
                 //записываем id пользователя для уже существующей записи в таблице cart
-                Cart::addCustomerId($_COOKIE['uuid'], $model->email);
+                Cart::addCustomerId($cart->id, $model->email);
 
                 //заполняем таблицу order
                 $order = new Order();
