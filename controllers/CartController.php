@@ -115,6 +115,7 @@ class CartController extends AppController
         $this->layout = false;
         return $this->render('cart-modal', ['items' => $items]);
     }
+
     //корзина для зарегистрированного пользователя
     public function actionView(){
 
@@ -128,6 +129,7 @@ class CartController extends AppController
         if($model->load(Yii::$app->request->post())){
 
             if($model->validate() && $model->addData($user->email)){
+
 
                 //заполняем таблицу order
                 $order = new Order();

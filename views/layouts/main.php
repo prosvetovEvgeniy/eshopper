@@ -101,11 +101,9 @@ AppAsset::register($this);
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
 
-                                <?php if(!Yii::$app->user->isGuest): ?>
+                                <?php if(Yii::$app->user->can('viewAdminModule')): ?>
                                     <li><a href="<?php echo Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
                                 <?php endif; ?>
-
-                                <li><a href="<?= Url::to(['site/destroy']) ?>"><i class="fa fa-shopping-cart"></i> Destroy </a></li>
 
                                 <?php if(Yii::$app->user->isGuest): ?>
 

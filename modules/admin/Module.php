@@ -12,18 +12,15 @@ class Module extends \yii\base\Module
      */
     public $controllerNamespace = 'app\modules\admin\controllers';
 
-    public function behaviors()
-    {
+    public function behaviors() {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => \yii\filters\AccessControl::className(),
                 'rules' => [
-                    // allow authenticated users
                     [
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['viewAdminModule']
                     ],
-                    // everything else is denied
                 ],
             ],
         ];

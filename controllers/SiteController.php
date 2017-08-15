@@ -112,7 +112,7 @@ class SiteController extends Controller
 
                 $cart = new Cart();
                 $cart->setNewUser($model->email);
-
+                
                 return $this->goHome();
             }
         }
@@ -131,13 +131,6 @@ class SiteController extends Controller
         return $this->render('contact', [
             'model' => $model,
         ]);
-    }
-    public function actionDestroy(){
-
-        if(!empty($_COOKIE['uuid'])){
-            setcookie ("uuid","",time()-3600 * 24 * 30, '/');
-            return $this->goHome();
-        }
     }
     /**
      * Displays about page.

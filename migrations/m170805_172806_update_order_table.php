@@ -77,19 +77,4 @@ class m170805_172806_update_order_table extends Migration
         $this->dropForeignKey('order_customer_id', 'order');
         $this->dropColumn('order', 'customer_id');
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m170805_172806_update_order_table cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

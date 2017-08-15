@@ -26,9 +26,7 @@ class m170728_103431_create_order_items_table extends Migration
         $this->addForeignKey('order_items_product_id', 'order_items', 'product_id', 'product', 'id');
     }
 
-    /**
-     * @inheritdoc
-     */
+
     public function down()
     {
         $this->dropTable('order_items');
