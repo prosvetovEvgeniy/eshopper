@@ -112,7 +112,7 @@ class SiteController extends Controller
 
                 $cart = new Cart();
                 $cart->setNewUser($model->email);
-                
+
                 return $this->goHome();
             }
         }

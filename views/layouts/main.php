@@ -101,10 +101,6 @@ AppAsset::register($this);
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
 
-                                <?php if(Yii::$app->user->can('viewAdminModule')): ?>
-                                    <li><a href="<?php echo Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
-                                <?php endif; ?>
-
                                 <?php if(Yii::$app->user->isGuest): ?>
 
                                     <li><a href="<?= Url::to(['cart/view-guest']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
@@ -112,6 +108,10 @@ AppAsset::register($this);
                                     <li><a href="<?= Url::to(['/site/signup']);?>"><i class="fa fa-lock"></i> Зарегистрироваться </a></li>
 
                                 <?php else: ?>
+
+                                    <?php if(Yii::$app->user->can('viewAdminModule')): ?>
+                                        <li><a href="<?php echo Url::to(['/admin/product/index']);?>"><i class="fa fa-lock"></i> Аккаунт</a></li>
+                                    <?php endif; ?>
 
 								    <li><a href="<?= Url::to(['cart/view']) ?>"><i class="fa fa-shopping-cart"></i> Корзина </a></li>
                                     <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['email'] ?>)</a></li>

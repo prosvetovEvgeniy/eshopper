@@ -112,7 +112,7 @@ AppAsset::register($this);
                                 <?php if(Yii::$app->user->isGuest): ?>
                                     <li><a href="<?= Url::to(['/admin']);?>"><i class="fa fa-lock"></i> Войти</a></li>
                                 <?php else: ?>
-                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти </a></li>
+                                    <li><a href="<?= Url::to(['/site/logout']);?>"><i class="fa fa-lock"></i> Выйти (<?= Yii::$app->user->identity['name'] ?>) </a></li>
                                 <?php endif; ?>
                             </ul>
                         </div>
@@ -135,19 +135,29 @@ AppAsset::register($this);
                         </div>
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
-                                <li><a href="<?= Url::to(['/admin']) ?>" class="active">Заказы</a></li>
-                                <li><a href="<?= Url::to(['user/index']) ?>">Покупатели</a></li>
+
+                                <?php if(Yii::$app->user->can('superUser')): ?>
+                                    <li><a href="<?= Url::to(['salary/index']) ?>">Зарплаты</a></li>
+                                <?php endif; ?>
+
+                                <?php if(Yii::$app->user->can('workWithOrders')): ?>
+                                    <li><a href="<?= Url::to(['order/index']) ?>">Заказы</a></li>
+                                    <li><a href="<?= Url::to(['user/index']) ?>">Покупатели</a></li>
+                                <?php endif; ?>
+
                                 <li class="dropdown"><a href="#">Категории<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= Url::to(['category/index']) ?>">Список категорий</a></li>
                                         <li><a href="<?= Url::to(['category/create']) ?>">Добавить категорию</a></li>
                                     </ul>
                                 </li>
+
                                 <li class="dropdown"><a href="<?= Url::to(['product/index']) ?>">Товары<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="<?= Url::to(['product/index']) ?>">Список товаров</a></li>
                                     </ul>
                                 </li>
+
                             </ul>
                         </div>
                     </div>
