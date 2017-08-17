@@ -137,7 +137,7 @@ AppAsset::register($this);
                             <ul class="nav navbar-nav collapse navbar-collapse">
 
                                 <?php if(Yii::$app->user->can('superUser')): ?>
-                                    <li><a href="<?= Url::to(['salary/index']) ?>">Зарплаты</a></li>
+                                    <li><a href="<?= Url::to(['salary/view']) ?>">Зарплаты</a></li>
                                 <?php endif; ?>
 
                                 <?php if(Yii::$app->user->can('workWithOrders')): ?>
