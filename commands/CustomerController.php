@@ -17,6 +17,11 @@ class CustomerController extends Controller
         $db->createCommand('TRUNCATE TABLE `order`')->query();
         $db->createCommand('TRUNCATE TABLE `order_items`')->query();
 
+        if($days == 0){
+            echo "Error: the number of days must be different from 0";
+            return;
+        }
+
         //если бота не существует создаем его или получаем
         if(!User::findOne(['email' => $botEmail])){
             $bot = $this->getBot($botEmail, '12345');
@@ -29,7 +34,7 @@ class CustomerController extends Controller
 
         for($i = 0; $i < $days; $i++){
 
-            $purchasesPerDay = mt_rand(15, 40); //случайная величина, количество покупок в день
+            $purchasesPerDay = mt_rand(5, 20); //случайная величина, количество покупок в день
 
             for($j = 0; $j < $purchasesPerDay; $j++){
 
