@@ -38,6 +38,7 @@ use app\modules\admin\models\OrderItems;
     <?php if(!empty($orders)): ?>
 
         <?php
+            //массив для дат формата Y.m.j
             $days = [];
 
             $start    = new \DateTime($orders[0]->created_at); //дата первой продажи за месяц
@@ -112,7 +113,7 @@ use app\modules\admin\models\OrderItems;
                     $orderItems = OrderItems::find()->where(['order_id' => $order->id])->all();
                     foreach ($orderItems as $item) {
                         $salary = 0; //вспомогательная переменная для расчета зарплаты
-                        $percent; //строка, которая содержит количество процетов надбавки
+                        $percent; //строка, которая содержит количество процентов надбавки
                         if($item->price > 1000){
                             $salary += 50 + ($item->price * 0.05);
                             $percent = '5%';
@@ -132,7 +133,7 @@ use app\modules\admin\models\OrderItems;
                         ?>
                         <tr>
                             <th scope="row"><?= $order->id ?></th>
-                            <td><?= $item->name ?></td>
+                            <td><a href="<?= \yii\helpers\Url::to(['/product/view', 'id' => $item->product_id])?>" target="_blank"> <?= $item->name?> </a></td>
                             <td><?= $item->qty_item ?></td>
                             <td><?= $item->qty_item*$item->price ?></td>
                             <td>+<?= $salary ?> ( <?= $percent?> &#8657;)</td>
@@ -168,7 +169,7 @@ use app\modules\admin\models\OrderItems;
                     ?>
                     <tr>
                         <th scope="row"><?= $order->id ?></th>
-                        <td><?= $item->name ?></td>
+                        <td><a href="<?= \yii\helpers\Url::to(['/product/view', 'id' => $item->product_id])?>" target="_blank"> <?= $item->name?> </a></td>
                         <td><?= $item->qty_item ?></td>
                         <td><?= $item->qty_item*$item->price ?></td>
                         <td>+<?= $salary ?>  ( <?= $percent?> &#8657;)</td>

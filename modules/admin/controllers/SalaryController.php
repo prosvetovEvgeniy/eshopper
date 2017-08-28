@@ -11,8 +11,6 @@ namespace app\modules\admin\controllers;
 use app\modules\admin\models\DateForm;
 use app\modules\admin\models\Order;
 use app\modules\admin\models\OrderItems;
-use Faker\Provider\zh_TW\DateTime;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use DatePeriod;
 use Yii;
@@ -25,7 +23,7 @@ class SalaryController extends Controller
         $orders = Order::find()->orderBy('created_at')->all();
         $model = new DateForm();
 
-        //получаем массив диапозонов дат по месяцам
+        //получаем массив диапазонов дат по месяцам
         $months = $this->getDateRange($orders);
 
         //формируем массив с годами для поля year модели DateForm
@@ -38,7 +36,7 @@ class SalaryController extends Controller
         if(Yii::$app->request->isAjax){
             $year = Yii::$app->request->post('year');
 
-            $option = ""; //содержит в себе теги option
+            $option = ""; //содержит в себе теги option для тега select
 
             //проходимся по всему массиву для текущего года
             foreach ($months[$year] as $month){
@@ -54,13 +52,25 @@ class SalaryController extends Controller
             $listOrders = $this->getOrdersInRange($currentYear, $model->month);
 
             return $this->render('view', ['model' => $model, 'years' => $years, 'months' => $months[$currentYear], 'orders' => $listOrders]);
-
         }
 
         return $this->render('view', ['model' => $model, 'years' => $years, 'months' => $months[$years[0]]]);
     }
 
-    //возращает миссива вида :[[номер года] => ['название месяца1', 'название месяца2','название месяца3',...] ...]
+    /**
+     * возращает миссив вида:
+     * [
+     *  [год1] => ['название месяца1',
+     *             'название месяца2',
+     *             'название месяца3',
+     *              ...],
+     *  [год2] => ['название месяца1',
+     *             'название месяца2',
+     *             'название месяца3',
+     *              ...],
+     *  ...
+     * ]
+     */
     private function getDateRange($orders){
 
         $start    = new \DateTime($orders[0]->created_at); //дата первой продажи
@@ -80,21 +90,20 @@ class SalaryController extends Controller
 
         $months = [];
 
-        //заполняем массив months :[[номер года] => ['название месяца1', 'название месяца2','название месяца3',...] ...]
+        //заполняем массив months
         foreach ($period as $date) {
-            $monthName = $this->getMonthName($date->format('n'));
-            $months[$date->format('Y')][$this->getMonthIndex($monthName)] = $monthName;
+            $months[$date->format('Y')][$date->format('n')] = $this->getMonthName($date->format('n'));
         }
+
         return $months;
     }
 
+    //возращает заказы в диапазоне определенной даты
     private function getOrdersInRange($currentYear, $month){
 
         if($month < 12){
-
             $dateFrom = new \DateTime($currentYear . '-' . $month);
             $dateTo = new \DateTime(($currentYear . '-' . (string) ($month + 1)));
-
         }
         else{
             $dateFrom = new \DateTime($currentYear . '-' . $month);
@@ -116,7 +125,7 @@ class SalaryController extends Controller
 
         return $monthName[$number];
     }
-    //возращает номер месяца
+    //возращает номер месяца, если название месяца задано в русском языке
     private function getMonthIndex($name){
         $monthIndexes = array(
             'январь' => 1, 'февраль' => 2, 'март' => 3, 'апрель' => 4,
