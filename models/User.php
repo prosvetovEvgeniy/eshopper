@@ -52,6 +52,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
         setcookie('uuid', $cart->id,time() + 3600*24*60, "/");
     }
+
     public function validatePassword($pass){
 
         if(Yii::$app->getSecurity()->validatePassword($pass, $this->password)){

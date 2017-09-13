@@ -41,35 +41,7 @@ class CartItems extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Cart::className(), ['id' => 'cart_id']);
     }
-    //удаляет товар из корзины
-    public function removeItem($cartId, $productId){
 
-        $cartItem = self::findOne(['cart_id' => $cartId, 'product_id' => $productId]);
-
-        if($cartItem->amount > 1){
-            $cartItem->amount -= 1;
-            $cartItem->save();
-        }
-        else{
-            $cartItem->delete();
-        }
-    }
-    //добавляет товар в корзину
-    public function addToCart($cartId, $productId, $amount = 1){
-
-        $cartItem = self::findOne(['cart_id' => $cartId, 'product_id' => $productId]);
-
-        if($cartItem){
-            $cartItem->amount += $amount;
-            $cartItem->save();
-        }
-        else{
-            $this->cart_id = $cartId;
-            $this->product_id = $productId;
-            $this->amount = $amount;
-            $this->save();
-        }
-    }
     //возвращает количество всех товаров для определенного cartId
     public function getTotalAmount($cartId){
 

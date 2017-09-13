@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\logic\busket\CartHandler;
 use app\models\Cart;
 use app\models\User;
 use app\models\Signup;
@@ -15,35 +16,7 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
-    /**
-     * @inheritdoc
-     */
-    /*public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post', 'get'],
-                ],
-            ],
-        ];
-    }*/
 
-    /**
-     * @inheritdoc
-     */
     public function actions()
     {
         return [
@@ -110,8 +83,7 @@ class SiteController extends Controller
         if($model->load(Yii::$app->request->post())){
             if($model->validate() && $model->signup()){
 
-                $cart = new Cart();
-                $cart->setNewUser($model->email);
+                Yii::createObject(CartHandler::class)->createCart($model->email);
 
                 return $this->goHome();
             }

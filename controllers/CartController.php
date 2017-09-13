@@ -8,6 +8,10 @@
 
 namespace app\controllers;
 
+use app\logic\busket\CartHandler;
+use app\logic\busket\CartItemsHandler;
+use app\logic\order\OrderHandler;
+use app\logic\user\UserHandler;
 use app\models\AddUserDataForm;
 use app\models\CartItems;
 use app\models\CartTable;
@@ -28,39 +32,16 @@ class CartController extends AppController
 {
     //добавляет товар в корзину
     public function actionAdd(){
-
         //получаем id товара и количество qty
-        $id = Yii::$app->request->post('id');
-        $qty = (int) Yii::$app->request->post('qty');
+        $productId = Yii::$app->request->post('id');
+        $amount = (int) Yii::$app->request->post('qty');
 
-        $recordExists = Cart::findOne(['id' => $_COOKIE['uuid']]);
+        Yii::createObject(CartHandler::class)->createCart();
 
-        if(!$recordExists){
-            $cart = new Cart();
-            $cart->id = $_COOKIE['uuid'];
-            $cart->save();
-        }
-        else{
-            $cart = $recordExists;
-        }
+        Yii::createObject(CartItemsHandler::class, [$productId, $amount])->save();
 
+        $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
-        $qty = !$qty ? 1 : $qty;
-
-        $product = Product::findOne($id);
-
-        if(empty($product)) return false;
-
-        $cartItem = new CartItems();
-        $cartItem->addToCart($cart->id,$product->id, $qty);
-
-        if(!Yii::$app->request->isAjax){
-            return $this->redirect(Yii::$app->request->referrer);
-        }
-
-        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
-
-        //отключаем layout и показываем шаблон
         $this->layout = false;
         return $this->render('cart-modal', ['items' => $items]);
     }
@@ -68,13 +49,7 @@ class CartController extends AppController
     //очищает сессию с данными о заказах
     public function actionClear(){
 
-        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
-
-        if(!$cart){
-            return false;
-        }
-
-        CartItems::deleteAll(['cart_id' => $cart->id]);
+        Yii::createObject(CartHandler::class)->clearCart();
 
         $this->layout = false;
         return $this->render('cart-modal');
@@ -82,36 +57,12 @@ class CartController extends AppController
 
     //удаляет определенный товар из корзины
     public function actionDeleteItem(){
-
         $productId = Yii::$app->request->post('product_id');
 
-        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
+        Yii::createObject(CartItemsHandler::class, [$productId])->remove();
 
-        if(!$cart){
-            return false;
-        }
+        $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
-        $cartItem = new CartItems();
-        $cartItem->removeItem($cart->id, $productId);
-
-        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
-
-        $this->layout = false;
-        return $this->render('cart-modal', ['items' => $items]);
-
-    }
-
-    //отображает корзину при отключенном javascript
-    public function actionShow(){
-        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
-
-        if(!$cart){
-            return false;
-        }
-
-        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
-
-        //отключаем layout и показываем шаблон
         $this->layout = false;
         return $this->render('cart-modal', ['items' => $items]);
     }
@@ -120,30 +71,17 @@ class CartController extends AppController
     public function actionView(){
 
         $model = new AddUserDataForm();
-
         $user = User::findOne(['id' => Yii::$app->user->id]);
-
-        $cart = Cart::findOne(['user_id' => $user->id]);
-        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+        $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
         if($model->load(Yii::$app->request->post())){
+            if($model->validate() && (new UserHandler($user->email))->addDataToUser()){
 
-            if($model->validate() && $model->addData($user->email)){
+                Yii::createObject(OrderHandler::class)->saveOrder($items, $user->email);
 
+                Yii::createObject(UserHandler::class, [$user->email])->sendEmail($items, (new CartHandler())->getCartId());
 
-                //заполняем таблицу order
-                $order = new Order();
-                $order->user_id = $user->id;
-                $order->save();
-
-                //сохраняем данные в таблицу OrderItems
-                $this->saveOrderItems($items, $order->id);
-
-                //отправляем пользователю сообщение на почту
-                $this->sendEmail($user->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id));
-
-                //удаляем товары из корзины
-                CartItems::deleteAll(['cart_id' => $cart->id]);
+                Yii::createObject(CartHandler::class)->clearCart();
 
                 Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
                 return $this->refresh();
@@ -153,8 +91,8 @@ class CartController extends AppController
         return $this->render('view', [
             'items' => $items,
             'model' => $model,
-            'totalAmount' => CartItems::getTotalAmount($cart->id),
-            'totalPrice' => CartItems::getTotalPrice($cart->id),
+            'totalAmount' => CartItems::getTotalAmount((new CartHandler())->getCartId()),
+            'totalPrice' => CartItems::getTotalPrice((new CartHandler())->getCartId()),
         ]);
     }
 
@@ -162,9 +100,8 @@ class CartController extends AppController
     public function actionViewGuest(){
 
         $model = new QuickSignup();
-
-        $cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
-        $items = CartItems::find()->where(['cart_id' => $cart->id])->orderBy('cart_id')->all();
+        $cartHandler = new CartHandler();
+        $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
         if($model->load(Yii::$app->request->post())){
 
@@ -172,22 +109,12 @@ class CartController extends AppController
 
             if($model->validate() && $model->signup($password)){
 
-                //записываем id пользователя для уже существующей записи в таблице cart
-                Cart::addUserId($cart->id, $model->email);
+                $cartHandler->addUserId($model->email);
 
-                //заполняем таблицу order
-                $order = new Order();
-                $order->user_id = $model->getUserId();
-                $order->save();
+                Yii::createObject(OrderHandler::class)->saveOrder($items, $model->email);
 
-                //сохраняем данные в таблицу OrderItems
-                $this->saveOrderItems($items, $order->id);
+                Yii::createObject(UserHandler::class, [$model->email])->sendEmail($items, $cartHandler->getCartId(), $password);
 
-                //отправляем пользователю сообщение на почту
-                $this->sendEmail($model->email, $items, CartItems::getTotalAmount($cart->id), CartItems::getTotalPrice($cart->id), $password);
-
-                //удаляем товары из корзины
-                CartItems::deleteAll(['cart_id' => $cart->id]);
                 //создаем новый uuid в куки
                 setcookie('uuid', UuidHelper::uuid(), time() + 3600*24*30, '/');
 
@@ -204,26 +131,4 @@ class CartController extends AppController
         ]);
     }
 
-    public function sendEmail($email, $items, $totalAmount, $totalPrice, $password = null){
-        //отпраляем сообщение пользователю на email (пока локально)
-        Yii::$app->mailer->compose('order',['items' => $items, 'password' => $password, 'totalAmount' => $totalAmount, 'totalPrice' => $totalPrice])
-            ->setFrom(['test@yandex.ru' => 'eshopper'])
-            ->setTo($email)
-            ->setSubject('Заказ')->send();
-    }
-
-    //данный метод сохраняет данные каждого товара в таблицу order_items
-    private function saveOrderItems($items,$order_id){
-
-        foreach ($items as $item){
-            $order_items = new OrderItems();
-            $order_items->order_id = $order_id; //номер заказа
-            $order_items->product_id = $item->product->id; //ид товара
-            $order_items->name = $item->product->name; //название (на момент заказа)
-            $order_items->price = $item->product->price; //цену (на момент заказа)
-            $order_items->qty_item = $item->amount; //количество
-            $order_items->save();
-        }
-
-    }
 }

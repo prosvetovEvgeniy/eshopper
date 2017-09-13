@@ -31,7 +31,7 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'zxcawerthdfgjsrthnnxldjfpqwrjihgllasd',
             'csrfParam' => '_csrf-frontend',
-            'enableCsrfValidation' => true,
+            'enableCsrfValidation' => false,
             'baseUrl' => '',
         ],
         'cache' => [

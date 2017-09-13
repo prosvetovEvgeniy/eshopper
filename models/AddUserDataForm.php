@@ -32,13 +32,4 @@ class AddUserDataForm extends Model
         ];
     }
 
-    public function addData($email){
-
-        $user = User::findOne(['email' => $email]);
-
-        $user->phone = $this->phone;
-        $user->address = $this->address;
-
-        return $user->save();
-    }
 }

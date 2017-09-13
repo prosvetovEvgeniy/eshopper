@@ -31,25 +31,6 @@ class Cart extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
         ];
     }
-    //создает новое поля в таблице Cart с id и user_id
-    public function setNewUser($email){
-        $user = User::findOne(['email' => $email]);
-
-        $uuid = UuidHelper::uuid();
-        $this->id = $uuid;
-        $this->user_id = $user->id;
-
-        $this->save();
-    }
-    //добавляет user_id при существующем id
-    public function addUserId($id, $email){
-
-        $cart = self::findOne(['id' => $id]);
-        $user = User::findOne(['email' => $email]);
-
-        $cart->user_id = $user->id;
-        $cart->save();
-    }
 
     public function getUser()
     {
