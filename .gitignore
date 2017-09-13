@@ -34,3 +34,4 @@ web/upload/global/*
 web/upload/store/*
 config/wep.php
 config/db.php
+tests/_output/*
