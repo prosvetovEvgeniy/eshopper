@@ -15,16 +15,9 @@ use app\logic\user\UserHandler;
 use app\models\AddUserDataForm;
 use app\models\CartItems;
 use app\models\CartTable;
-use app\models\Category;
 use app\models\User;
-use app\models\Product;
-use app\models\Cart;
-use app\models\Order;
-use app\models\OrderItems;
 use app\models\QuickSignup;
-use app\models\Signup;
 use Yii;
-use yii\web\HttpException;
 use thamtech\uuid\helpers\UuidHelper;
 
 //контроллер отвечающий за работу с корзиной
@@ -37,8 +30,7 @@ class CartController extends AppController
         $amount = (int) Yii::$app->request->post('qty');
 
         Yii::createObject(CartHandler::class)->createCart();
-
-        Yii::createObject(CartItemsHandler::class, [$productId, $amount])->save();
+        Yii::createObject(CartItemsHandler::class, [$productId, $amount])->saveItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -59,7 +51,7 @@ class CartController extends AppController
     public function actionDeleteItem(){
         $productId = Yii::$app->request->post('product_id');
 
-        Yii::createObject(CartItemsHandler::class, [$productId])->remove();
+        Yii::createObject(CartItemsHandler::class, [$productId])->removeItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -75,12 +67,10 @@ class CartController extends AppController
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
         if($model->load(Yii::$app->request->post())){
-            if($model->validate() && (new UserHandler($user->email))->addDataToUser()){
+            if($model->validate() && (new UserHandler())->addDataToUser($user, $model->phone, $model->address)){
 
-                Yii::createObject(OrderHandler::class)->saveOrder($items, $user->email);
-
-                Yii::createObject(UserHandler::class, [$user->email])->sendEmail($items, (new CartHandler())->getCartId());
-
+                Yii::createObject(OrderHandler::class)->saveOrder($items, $user);
+                Yii::createObject(UserHandler::class)->sendEmail($items, $_COOKIE['UUID'], $user->email);
                 Yii::createObject(CartHandler::class)->clearCart();
 
                 Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
@@ -100,34 +90,33 @@ class CartController extends AppController
     public function actionViewGuest(){
 
         $model = new QuickSignup();
-        $cartHandler = new CartHandler();
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
         if($model->load(Yii::$app->request->post())){
 
             $password = Yii::$app->getSecurity()->generateRandomString(8);
 
-            if($model->validate() && $model->signup($password)){
+            if($model->validate()){
+                if((new UserHandler())->registrateUser($model->name, $model->email, $model->phone, $model->address, $password)){
 
-                $cartHandler->addUserId($model->email);
+                    Yii::createObject(CartHandler::class)->addUserId($model->email);
+                    Yii::createObject(OrderHandler::class)->saveOrder($items, $model->email);
+                    Yii::createObject(UserHandler::class)->sendEmail($items, $_COOKIE['UUID'],$model->email, $password);
 
-                Yii::createObject(OrderHandler::class)->saveOrder($items, $model->email);
+                    //создаем новый uuid в куки
+                    setcookie('uuid', UuidHelper::uuid(), time() + 3600*24*30, '/');
 
-                Yii::createObject(UserHandler::class, [$model->email])->sendEmail($items, $cartHandler->getCartId(), $password);
-
-                //создаем новый uuid в куки
-                setcookie('uuid', UuidHelper::uuid(), time() + 3600*24*30, '/');
-
-                Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
-                return $this->refresh();
+                    Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+                    return $this->refresh();
+                }
             }
         }
 
         return $this->render('view-guest', [
             'items' => $items,
             'model' => $model,
-            'totalAmount' => CartItems::getTotalAmount($cart->id),
-            'totalPrice' => CartItems::getTotalPrice($cart->id),
+            'totalAmount' => CartItems::getTotalAmount($_COOKIE['UUID']),
+            'totalPrice' => CartItems::getTotalPrice($_COOKIE['UUID']),
         ]);
     }
 

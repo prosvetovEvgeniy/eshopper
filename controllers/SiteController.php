@@ -3,14 +3,11 @@
 namespace app\controllers;
 
 use app\logic\busket\CartHandler;
-use app\models\Cart;
 use app\models\User;
 use app\models\Signup;
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 
@@ -84,7 +81,6 @@ class SiteController extends Controller
             if($model->validate() && $model->signup()){
 
                 Yii::createObject(CartHandler::class)->createCart($model->email);
-
                 return $this->goHome();
             }
         }

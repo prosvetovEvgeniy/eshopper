@@ -20,9 +20,8 @@ class CartItemsHandler
         $this->productId = $product->id;
         $this->amount = !$amount ? 1 : $amount;
     }
-
-    public function remove(){
-
+    //удаляет товар из корзины
+    public function removeItem(){
         $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->productId]);
 
         if($cartItem->amount > 1){
@@ -33,8 +32,8 @@ class CartItemsHandler
             $cartItem->delete();
         }
     }
-
-    public function save(){
+    //сохраняет товар в корзину
+    public function saveItem(){
         $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->productId]);
 
         if($cartItem){

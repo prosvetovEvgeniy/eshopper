@@ -5,19 +5,17 @@ namespace app\logic\order;
 use app\logic\user\UserHandler;
 use app\models\OrderItems;
 use app\models\Order;
+use app\models\User;
 use Yii;
 
 class OrderHandler
 {
-    public function __construct()
-    {
-    }
-
+    //сохраняет сделанный заказ
     public function saveOrder($items,$email){
-        $userId = Yii::createObject(UserHandler::class, [$email])->getUserId();
+        $user = User::findOne(['email' => $email]);
 
         $order = new Order();
-        $order->user_id = $userId;
+        $order->user_id = $user->id;
         $order->save();
 
         $this->saveOrderItems($items, $order->id);
@@ -25,7 +23,6 @@ class OrderHandler
 
     //данный метод сохраняет данные каждого товара в таблицу order_items
     private function saveOrderItems($items,$order_id){
-
         foreach ($items as $item){
             $order_items = new OrderItems();
             $order_items->order_id = $order_id; //номер заказа
@@ -35,6 +32,5 @@ class OrderHandler
             $order_items->qty_item = $item->amount; //количество
             $order_items->save();
         }
-
     }
 }

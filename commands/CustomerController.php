@@ -53,7 +53,12 @@ class CustomerController extends Controller
             }
         }
     }
-
+    public function actionClear(){
+        $db = Yii::$app->db;
+        //очищаем таблицы order и order_items
+        $db->createCommand('TRUNCATE TABLE `order`')->query();
+        $db->createCommand('TRUNCATE TABLE `order_items`')->query();
+    }
     //создает пользователя с ником bot и указанным email
     public function getBot($email, $password){
         $bot = new User();

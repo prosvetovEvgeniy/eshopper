@@ -22,13 +22,14 @@ class CartHandler
         $this->cart = Cart::findOne(['id' => $_COOKIE['uuid']]);
     }
 
+    //создает корзину для пользователя
     public function createCart($email = null){
         if(!$this->cart && $email == null) {
             $this->cart = new Cart();
             $this->cart->id = $_COOKIE['uuid'];
             $this->cart->save();
         }
-        elseif($email != null)
+        else if($email != null)
         {
             $user = User::findOne(['email' => $email]);
             $uuid = UuidHelper::uuid();
@@ -39,7 +40,7 @@ class CartHandler
             $this->cart->save();
         }
     }
-
+    //полностью очищает корзину
     public function clearCart(){
         CartItems::deleteAll(['cart_id' => $this->cart->id]);
     }
@@ -48,8 +49,10 @@ class CartHandler
     public function addUserId($email){
 
         $user = User::findOne(['email' => $email]);
+
         $this->cart->user_id = $user->id;
         $this->cart->save();
+
     }
 
     public function getCart(){

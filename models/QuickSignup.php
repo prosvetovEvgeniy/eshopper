@@ -38,21 +38,4 @@ class QuickSignup extends Model
             'address' => 'Адрес',
         ];
     }
-    public function getUserId(){
-        $user = User::findOne(['email' => $this->email]);
-        return $user->id;
-    }
-    public function signup($password){
-
-        $user = new User();
-
-        $user->name = $this->name;
-        $user->email = $this->email;
-        $user->phone = $this->phone;
-        $user->address = $this->address;
-        $user->setPassword($password);
-
-        return $user->save();
-    }
-
 }

@@ -18,9 +18,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         parent::afterSave($insert, $changedAttributes);
 
         //добавляем роль зарегистрировавшемуся пользователю
-        $auth = Yii::$app->authManager;
-        $customer = $auth->getRole('customer');
-        $auth->assign($customer, $this->id);
+        if(Yii::$app->user->isGuest){
+            $auth = Yii::$app->authManager;
+            $customer = $auth->getRole('customer');
+            $auth->assign($customer, $this->id);
+        }
     }
 
     public static function findIdentity($id){

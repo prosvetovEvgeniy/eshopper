@@ -9,34 +9,35 @@ use Yii;
 
 class UserHandler
 {
-    protected $email;
-
-    public function __construct($email = null)
-    {
-        $this->email = $email;
-    }
 
     //отпраляем сообщение пользователю на email (локально)
-    public function sendEmail($items, $cartId, $password = null){
+    public function sendEmail($items, $cartId, $email,$password = null){
 
         $totalAmount = CartItems::getTotalAmount($cartId);
         $totalPrice = CartItems::getTotalPrice($cartId);
 
         Yii::$app->mailer->compose('order',['items' => $items, 'password' => $password, 'totalAmount' => $totalAmount, 'totalPrice' => $totalPrice])
             ->setFrom(['test@yandex.ru' => 'eshopper'])
-            ->setTo($this->email)
+            ->setTo($email)
             ->setSubject('Заказ')->send();
     }
-    public function addDataToUser(){
-        //$user = User::findOne(['email' => $this->email]);
+    //добавляет данные к уже существующему пользователю
+    public function addDataToUser($user, $phone, $address){
+        $user->phone = $phone;
+        $user->address = $address;
 
-        //$user->phone = $this->phone;
-        //$user->address = $this->address;
-
-        return true;
+        return $user->save();
     }
-    public function getUserId(){
-        $user = User::findOne(['email' => $this->email]);
-        return $user->id;
+    //региструриует нового пользователя
+    public function registrateUser($name, $email, $phone, $address, $password){
+        $user = new User();
+
+        $user->name = $name;
+        $user->email = $email;
+        $user->phone = $phone;
+        $user->address = $address;
+        $user->setPassword($password);
+
+        return $user->save();
     }
 }
