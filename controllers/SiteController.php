@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\logic\busket\CartHandler;
+use app\logic\user\UserHandler;
 use app\models\User;
 use app\models\Signup;
 use Yii;
@@ -78,7 +79,7 @@ class SiteController extends Controller
         $model = new Signup();
 
         if($model->load(Yii::$app->request->post())){
-            if($model->validate() && $model->signup()){
+            if($model->validate() && (new UserHandler())->quickSignUp($model->name, $model->email, $model->password)){
 
                 Yii::createObject(CartHandler::class)->createCart($model->email);
                 return $this->goHome();

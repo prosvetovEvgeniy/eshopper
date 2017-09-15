@@ -9,7 +9,6 @@ use Yii;
 
 class UserHandler
 {
-
     //отпраляем сообщение пользователю на email (локально)
     public function sendEmail($items, $cartId, $email,$password = null){
 
@@ -29,13 +28,23 @@ class UserHandler
         return $user->save();
     }
     //региструриует нового пользователя
-    public function registrateUser($name, $email, $phone, $address, $password){
+    public function signUp($name, $email, $phone, $address, $password){
         $user = new User();
 
         $user->name = $name;
         $user->email = $email;
         $user->phone = $phone;
         $user->address = $address;
+        $user->setPassword($password);
+
+        return $user->save();
+    }
+    //быстрая регистрация
+    public function quickSignUp($name, $email, $password){
+        $user = new User();
+
+        $user->name = $name;
+        $user->email = $email;
         $user->setPassword($password);
 
         return $user->save();

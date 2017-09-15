@@ -15,6 +15,7 @@ use app\logic\user\UserHandler;
 use app\models\AddUserDataForm;
 use app\models\CartItems;
 use app\models\CartTable;
+use app\models\Product;
 use app\models\User;
 use app\models\QuickSignup;
 use Yii;
@@ -29,8 +30,10 @@ class CartController extends AppController
         $productId = Yii::$app->request->post('id');
         $amount = (int) Yii::$app->request->post('qty');
 
+        $product = Product::findOne(['id' => $productId]);
+
         Yii::createObject(CartHandler::class)->createCart();
-        Yii::createObject(CartItemsHandler::class, [$productId, $amount])->saveItem();
+        Yii::createObject(CartItemsHandler::class, [$product, $amount])->saveItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -51,7 +54,8 @@ class CartController extends AppController
     public function actionDeleteItem(){
         $productId = Yii::$app->request->post('product_id');
 
-        Yii::createObject(CartItemsHandler::class, [$productId])->removeItem();
+        $product = Product::findOne(['id' => $productId]);
+        Yii::createObject(CartItemsHandler::class, [$product])->removeItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -97,7 +101,7 @@ class CartController extends AppController
             $password = Yii::$app->getSecurity()->generateRandomString(8);
 
             if($model->validate()){
-                if((new UserHandler())->registrateUser($model->name, $model->email, $model->phone, $model->address, $password)){
+                if((new UserHandler())->signUp($model->name, $model->email, $model->phone, $model->address, $password)){
 
                     Yii::createObject(CartHandler::class)->addUserId($model->email);
                     Yii::createObject(OrderHandler::class)->saveOrder($items, $model->email);
@@ -119,5 +123,4 @@ class CartController extends AppController
             'totalPrice' => CartItems::getTotalPrice($_COOKIE['UUID']),
         ]);
     }
-
 }

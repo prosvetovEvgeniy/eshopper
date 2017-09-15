@@ -17,10 +17,10 @@ class Product extends ActiveRecord
     {
         return [
             'image' => [
-'class' => 'rico\yii2images\behaviors\ImageBehave',
-]
-];
-}
+            'class' => 'rico\yii2images\behaviors\ImageBehave',
+            ]
+        ];
+    }
 
     public static function tableName()
     {

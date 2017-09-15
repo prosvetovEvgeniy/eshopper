@@ -36,14 +36,4 @@ class Signup extends Model
             'password' => 'Пароль',
         ];
     }
-
-    public function signup(){
-        $user = new User();
-
-        $user->name = $this->name;
-        $user->email = $this->email;
-        $user->setPassword($this->password);
-
-        return $user->save();
-    }
 }

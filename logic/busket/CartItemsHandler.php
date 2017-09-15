@@ -8,21 +8,20 @@ use Yii;
 
 class CartItemsHandler
 {
-    protected $productId;
+    protected $product;
     protected $cartId;
     protected $amount;
 
-    public function __construct($productId = null, $amount = null)
+    public function __construct($product = null, $amount = null)
     {
-        $product = Product::findOne($productId);
-
         $this->cartId = Yii::createObject(CartHandler::class)->getCartId();
-        $this->productId = $product->id;
+        $this->product = $product;
         $this->amount = !$amount ? 1 : $amount;
     }
+
     //удаляет товар из корзины
     public function removeItem(){
-        $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->productId]);
+        $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->product->id]);
 
         if($cartItem->amount > 1){
             $cartItem->amount -= 1;
@@ -32,9 +31,10 @@ class CartItemsHandler
             $cartItem->delete();
         }
     }
+
     //сохраняет товар в корзину
     public function saveItem(){
-        $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->productId]);
+        $cartItem = CartItems::findOne(['cart_id' => $this->cartId, 'product_id' => $this->product->id]);
 
         if($cartItem){
             $cartItem->amount += $this->amount;
@@ -43,7 +43,7 @@ class CartItemsHandler
         else{
             $cartItem = new CartItems();
             $cartItem->cart_id = $this->cartId;
-            $cartItem->product_id = $this->productId;
+            $cartItem->product_id = $this->product->id;
             $cartItem->amount = $this->amount;
             $cartItem->save();
         }
