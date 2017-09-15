@@ -1,7 +1,8 @@
 <?php
 namespace logic;
 
-class UserTest extends \Codeception\Test\Unit
+
+class OrderHandlerTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester

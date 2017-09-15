@@ -2,7 +2,7 @@
 namespace logic;
 
 
-class CartItemsTest extends \Codeception\Test\Unit
+class CartItemsHandlerTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester

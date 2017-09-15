@@ -9,4 +9,4 @@ modules:
      - Db
      - Yii2:
          configFile: 'config/test.php'
-         part: init
+         part: [init, orm, email]

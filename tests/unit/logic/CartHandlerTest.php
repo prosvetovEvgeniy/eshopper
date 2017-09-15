@@ -2,7 +2,7 @@
 namespace logic;
 
 
-class CartTest extends \Codeception\Test\Unit
+class CartHandlerTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester
@@ -11,14 +11,16 @@ class CartTest extends \Codeception\Test\Unit
 
     protected function _before()
     {
+
     }
 
     protected function _after()
     {
+
     }
 
     // tests
-    public function testSomeFeature()
+    public function testSignUp()
     {
 
     }

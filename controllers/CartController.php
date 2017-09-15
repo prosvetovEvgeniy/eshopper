@@ -31,7 +31,8 @@ class CartController extends AppController
         $amount = (int) Yii::$app->request->post('qty');
 
         $product = Product::findOne(['id' => $productId]);
-
+        debug(Yii::$app->authManager);
+        die;
         Yii::createObject(CartHandler::class)->createCart();
         Yii::createObject(CartItemsHandler::class, [$product, $amount])->saveItem();
 
