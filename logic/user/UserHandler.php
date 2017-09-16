@@ -6,6 +6,8 @@ use app\models\User;
 use app\models\CartItems;
 
 use Yii;
+use yii\mail\MailerInterface;
+use yii\swiftmailer\Mailer;
 
 class UserHandler
 {
@@ -20,6 +22,7 @@ class UserHandler
             ->setTo($email)
             ->setSubject('Заказ')->send();
     }
+
     //добавляет данные к уже существующему пользователю
     public function addDataToUser($user, $phone, $address){
         $user->phone = $phone;
@@ -27,6 +30,7 @@ class UserHandler
 
         return $user->save();
     }
+
     //региструриует нового пользователя
     public function signUp($name, $email, $phone, $address, $password){
         $user = new User();
@@ -39,6 +43,7 @@ class UserHandler
 
         return $user->save();
     }
+
     //быстрая регистрация
     public function quickSignUp($name, $email, $password){
         $user = new User();

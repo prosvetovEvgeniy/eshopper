@@ -15,7 +15,8 @@ extensions:
 modules:
     config:
         Db:
-            dsn: 'mysql:host=localhost;dbname=eshopper'
+            dsn: 'mysql:host=localhost;dbname=eshopper_test'
             user: 'root'
             password: ''
-            dump: tests/_data/dump.sql
+            dump: tests/_data/eshopper_test_dump.sql
+            cleanup: true

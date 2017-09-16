@@ -14,6 +14,7 @@ class ContactFormCest
     public function submitEmptyForm(\FunctionalTester $I)
     {
         $I->submitForm('#contact-form', []);
+
         $I->expectTo('see validations errors');
         $I->see('Contact', 'h1');
         $I->see('Name cannot be blank');

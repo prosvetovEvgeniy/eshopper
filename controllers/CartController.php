@@ -18,6 +18,7 @@ use app\models\CartTable;
 use app\models\Product;
 use app\models\User;
 use app\models\QuickSignup;
+use app\models\Cart;
 use Yii;
 use thamtech\uuid\helpers\UuidHelper;
 
@@ -31,10 +32,11 @@ class CartController extends AppController
         $amount = (int) Yii::$app->request->post('qty');
 
         $product = Product::findOne(['id' => $productId]);
-        debug(Yii::$app->authManager);
-        die;
-        Yii::createObject(CartHandler::class)->createCart();
-        Yii::createObject(CartItemsHandler::class, [$product, $amount])->saveItem();
+
+        $cartHandler = new CartHandler();
+        $cartHandler->createCart();
+
+        Yii::createObject(CartItemsHandler::class, [$cartHandler->getCart(),$product, $amount])->saveItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -56,7 +58,7 @@ class CartController extends AppController
         $productId = Yii::$app->request->post('product_id');
 
         $product = Product::findOne(['id' => $productId]);
-        Yii::createObject(CartItemsHandler::class, [$product])->removeItem();
+        Yii::createObject(CartItemsHandler::class, [(new CartHandler())->getCart(),$product])->removeItem();
 
         $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
@@ -67,21 +69,21 @@ class CartController extends AppController
     //корзина для зарегистрированного пользователя
     public function actionView(){
 
-        $model = new AddUserDataForm();
-        $user = User::findOne(['id' => Yii::$app->user->id]);
-        $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
+            $model = new AddUserDataForm();
+            $user = User::findOne(['id' => Yii::$app->user->id]);
+            $items = CartItems::find()->where(['cart_id' => $_COOKIE['uuid']])->orderBy('cart_id')->all();
 
-        if($model->load(Yii::$app->request->post())){
-            if($model->validate() && (new UserHandler())->addDataToUser($user, $model->phone, $model->address)){
+            if($model->load(Yii::$app->request->post())){
+                if($model->validate() && (new UserHandler())->addDataToUser($user, $model->phone, $model->address)){
 
-                Yii::createObject(OrderHandler::class)->saveOrder($items, $user);
-                Yii::createObject(UserHandler::class)->sendEmail($items, $_COOKIE['UUID'], $user->email);
-                Yii::createObject(CartHandler::class)->clearCart();
+                    Yii::createObject(OrderHandler::class)->saveOrder($items, $user);
+                    Yii::createObject(UserHandler::class)->sendEmail($items, $_COOKIE['UUID'], $user->email);
+                    Yii::createObject(CartHandler::class)->clearCart();
 
-                Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
-                return $this->refresh();
+                    Yii::$app->session->setFlash('success', 'Ваш заказ принят Менеджер скоро свяжется с вами.');
+                    return $this->refresh();
+                }
             }
-        }
 
         return $this->render('view', [
             'items' => $items,
@@ -120,8 +122,8 @@ class CartController extends AppController
         return $this->render('view-guest', [
             'items' => $items,
             'model' => $model,
-            'totalAmount' => CartItems::getTotalAmount($_COOKIE['UUID']),
-            'totalPrice' => CartItems::getTotalPrice($_COOKIE['UUID']),
+            'totalAmount' => CartItems::getTotalAmount((new CartHandler())->getCartId()),
+            'totalPrice' => CartItems::getTotalPrice((new CartHandler())->getCartId()),
         ]);
     }
 }

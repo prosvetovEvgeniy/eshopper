@@ -81,7 +81,7 @@ class SiteController extends Controller
         if($model->load(Yii::$app->request->post())){
             if($model->validate() && (new UserHandler())->quickSignUp($model->name, $model->email, $model->password)){
 
-                Yii::createObject(CartHandler::class)->createCart($model->email);
+                Yii::createObject(CartHandler::class)->attachUserToCart($model->email);
                 return $this->goHome();
             }
         }

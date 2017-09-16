@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\rbac\DbManager;
 use yii\web\IdentityInterface;
 
 
@@ -20,6 +21,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         //добавляем роль зарегистрировавшемуся пользователю
         if(Yii::$app->user->isGuest){
             $auth = Yii::$app->authManager;
+            $auth = Yii::createObject(DbManager::class);
             $customer = $auth->getRole('customer');
             $auth->assign($customer, $this->id);
         }
